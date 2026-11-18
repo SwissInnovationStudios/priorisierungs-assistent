@@ -1,0 +1,93 @@
+/* =====================================================================
+   Design-Tokens – ausschliesslich Namen, die es in SBB Lyne gibt.
+   Geprüft gegen @sbb-esta/lyne-elements 5.13.2 (standard-theme.css).
+
+   Umstellung auf Lyne: Diese Datei löschen und stattdessen
+   @sbb-esta/lyne-elements/off-brand-theme.css (ohne SBB-Rot/-Schrift) oder
+   …/standard-theme.css (volle Marke) laden. Alle Werte unten sind die
+   Lyne-Werte – mit drei bewussten Abweichungen (markiert mit ≠ LYNE).
+   App-eigene Tokens (--app-*) stehen in app.css und bleiben bestehen.
+   ===================================================================== */
+:root {
+  color-scheme: light;
+
+  /* Graustufen – identisch mit Lyne */
+  --sbb-color-white: #ffffff;
+  --sbb-color-milk: #f6f6f6;
+  --sbb-color-cloud: #e5e5e5;
+  --sbb-color-silver: #dcdcdc;
+  --sbb-color-aluminium: #d2d2d2;
+  --sbb-color-platinum: #cdcdcd;
+  --sbb-color-cement: #bdbdbd;
+  --sbb-color-graphite: #b7b7b7;
+  --sbb-color-storm: #a8a8a8;
+  --sbb-color-smoke: #8d8d8d;
+  --sbb-color-metal: #767676;
+  --sbb-color-granite: #686868;
+  --sbb-color-anthracite: #5a5a5a;
+  --sbb-color-iron: #444444;
+  --sbb-color-charcoal: #212121;
+  --sbb-color-midnight: #151515;
+  --sbb-color-black: #000000;
+
+  /* ≠ LYNE: Primärfarbe. Lyne standard = SBB-Rot, off-brand = «royal».
+     Hier ein eigenes Blau, damit die öffentliche Seite nicht als SBB-Auftritt erscheint. */
+  --sbb-color-primary: #1d4f86;
+  --sbb-color-primary125: #163d68;
+  --sbb-color-primary85: #4a72a0;
+
+  /* Funktionsfarben – Lyne-Werte (error = red125, success = green) */
+  --sbb-color-red125: #c60018;
+  --sbb-color-error: var(--sbb-color-red125);
+  --sbb-color-green: #00973b;
+  --sbb-color-success: var(--sbb-color-green);
+
+  /* Abstände – Lyne fixed scale */
+  --sbb-spacing-fixed-1x: 0.25rem;
+  --sbb-spacing-fixed-2x: 0.5rem;
+  --sbb-spacing-fixed-3x: 0.75rem;
+  --sbb-spacing-fixed-4x: 1rem;
+  --sbb-spacing-fixed-5x: 1.25rem;
+  --sbb-spacing-fixed-6x: 1.5rem;
+  --sbb-spacing-fixed-8x: 2rem;
+  --sbb-spacing-fixed-10x: 2.5rem;
+  --sbb-spacing-fixed-12x: 3rem;
+
+  /* Radien – Lyne */
+  --sbb-border-radius-1x: 0.125rem;
+  --sbb-border-radius-2x: 0.25rem;
+  --sbb-border-radius-4x: 0.5rem;
+  --sbb-border-radius-8x: 1rem;
+  --sbb-border-radius-16x: 2rem;
+  --sbb-border-width-1x: 0.0625rem;
+  --sbb-border-width-2x: 0.125rem;
+
+  /* ≠ LYNE: Schrift. Lyne: SBB, Inter, "Helvetica Neue", … – hier ohne die SBB-Hausschrift.
+     Inter ist bereits Lynes erste Ersatzschrift. */
+  --sbb-typo-font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sbb-typo-letter-spacing-heading: 0em;
+  /* ≠ LYNE: 0.03em / 1.75 sind auf die SBB-Schrift abgestimmt; Inter läuft breiter. */
+  --sbb-typo-letter-spacing-text: 0.005em;
+  --sbb-typo-line-height-heading: 1.3;
+  --sbb-typo-line-height-text: 1.6;
+  --sbb-typo-scale-0-75x: 0.75rem;
+  --sbb-typo-scale-0-8125x: 0.8125rem;
+  --sbb-typo-scale-0-875x: 0.875rem;
+  --sbb-typo-scale-default: 1rem;
+  --sbb-typo-scale-1-125x: 1.125rem;
+  --sbb-typo-scale-1-25x: 1.25rem;
+  --sbb-typo-scale-1-5x: 1.5rem;
+  --sbb-typo-scale-2x: 2rem;
+  --sbb-typo-scale-2-5x: 2.5rem;
+
+  /* Fokus – Lyne-Namen */
+  --sbb-focus-outline-color: var(--sbb-color-black);
+  --sbb-focus-outline-offset: 0.1875rem;
+  --sbb-focus-outline-width: var(--sbb-border-width-2x);
+}
+
+/* Inter (SIL Open Font License 1.1), selbst gehostet – siehe fonts/LICENSE-Inter.txt.
+   400 / 600 / 700, kein Light-Schnitt. Mit der SBB-Schrift fällt 600 auf «Bold» (echter Schnitt, keine Pseudo-Fettung). */
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400; font-display: swap; src: url("../fonts/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 600; font-display: swap; src: url("../fonts/inter-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 700; font-display: swap; src: url("../fonts/inter-latin-700-normal.woff2") format("woff2"); }

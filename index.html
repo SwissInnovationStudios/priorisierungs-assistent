@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Priorisierungs-Assistent</title>
+<meta name="description" content="Schritt für Schritt zu einer nachvollziehbaren Jira-Priorität und Bearbeitungsempfehlung. Workshop-Prototyp, keine offizielle Richtlinie.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Priorisierung">
+<link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="app-skip" href="#wizard">Zum Inhalt</a>
+
+<!-- Lyne: <sbb-header> -->
+<header class="sbb-header">
+  <div class="sbb-header__inner">
+    <div class="sbb-header__brand">
+      <img class="sbb-header__mark" src="assets/icon.svg" alt="" width="32" height="32">
+      <div class="sbb-header__title">Priorisierungs-Assistent<span class="sbb-header__sub" data-ruleset></span></div>
+    </div>
+    <div class="sbb-header__actions">
+      <button type="button" class="sbb-transparent-button app-hide-s" id="qr-open">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 19h1.5M19.5 14v2"/></svg>
+        Aufs Handy
+      </button>
+      <button type="button" class="sbb-secondary-button" id="new-case">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Neuer Fall
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="app-container">
+  <div class="app-layout">
+    <!-- Lyne: <sbb-card size="l"> -->
+    <section id="wizard" class="sbb-card" aria-label="Vorgang bewerten"></section>
+    <aside id="comparison" class="sbb-card app-sticky" aria-labelledby="compare-title"></aside>
+  </div>
+
+  <!-- Lyne: <sbb-accordion><sbb-expansion-panel> -->
+  <details class="sbb-card sbb-expansion-panel app-about">
+    <summary class="sbb-expansion-panel__header">Wie funktioniert die Bewertungslogik?</summary>
+    <div class="sbb-expansion-panel__content app-stack">
+      <p>Für die Jira-Priorität gewinnt die höchste zutreffende Regel. Auswirkungen, Betriebs- und Sicherheitslage, Fristfolgen, Abhängigkeiten und Nutzen werden geprüft. Aufwand ändert die Prioritätsstufe nicht.</p>
+      <p>Ein nahes Datum allein ist kein Grund für eine hohe Priorität: Entscheidend ist, was passiert, wenn die Frist verpasst wird. Ein Vorgang, der andere Arbeiten blockiert, ist nicht automatisch ein Blocker.</p>
+      <p>Startklare und ausreichend beurteilbare Fälle werden separat nach Prioritätsstufe und Zuschlägen für Behandlungsart, wirksame Frist, Abhängigkeit und kleinen Aufwand eingeordnet. Bei Gleichstand gilt die Speicherreihenfolge. Unklare oder noch nicht startklare Fälle werden getrennt angezeigt. Die Liste ist kein Jira-Rank.</p>
+      <p>Der Assistent gibt Empfehlungen. Das Team bewertet eigenständig, der Product Owner entscheidet bei Priorisierungskonflikten oder Unklarheiten. Bestehende Betriebs- und Sicherheitsprozesse haben Vorrang.</p>
+      <p class="sbb-text-s app-muted app-mb-0">Die Regeln sind ein Workshop-Entwurf und keine offizielle SBB-Richtlinie. Nicht dokumentierte Detailregeln, etwa die genaue Security-Grenze zwischen Major und Critical, sind Annahmen. Die Anwendung ersetzt keine zuständigen Eskalationsprozesse.</p>
+    </div>
+  </details>
+
+  <!-- Lyne: <sbb-footer> -->
+  <footer class="sbb-footer">
+    <p><span data-ruleset></span> · Keine Jira-Anbindung · Vergleichsfälle werden nur lokal in diesem Browser gespeichert.</p>
+    <p><a data-public-url href="#"></a></p>
+  </footer>
+</main>
+
+<!-- Lyne: <sbb-dialog> -->
+<dialog id="qr-dialog" class="sbb-dialog" aria-labelledby="qr-title">
+  <div class="sbb-dialog__inner">
+    <div class="sbb-dialog__head">
+      <h2 id="qr-title" class="sbb-title sbb-title--2">Auf dem Handy öffnen</h2>
+      <button type="button" class="sbb-mini-button" id="qr-close" aria-label="Schliessen">
+        <svg class="app-icon app-icon--s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <img class="app-qr" src="assets/qr.svg" alt="QR-Code zum Priorisierungs-Assistenten" width="320" height="320">
+    <p class="app-qr-url"><a data-public-url href="#"></a></p>
+    <p class="sbb-text-s app-muted app-mb-0">Code scannen, dann im Browser «Zum Home-Bildschirm» wählen. Die Vergleichsliste bleibt auf dem jeweiligen Gerät.</p>
+  </div>
+</dialog>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
