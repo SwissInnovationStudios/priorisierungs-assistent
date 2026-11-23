@@ -63,8 +63,25 @@ function notification(type, items, title, extra = {}) {
     el('div', { class: 'sbb-notification__content' }, [title ? el('strong', { class: 'sbb-notification__title' }, title) : null, ...items.map(s => txt(s))])
   ]);
 }
+// Prioritäts-Icons: eigene Zeichnung in der Bildsprache von Jira (Sperre, Pfeile hoch/runter), keine Atlassian-Assets.
+// Farbe über currentColor, damit sie auf jedem Chip-Hintergrund lesbar bleibt. Ohne Text → ändert textContent nicht.
+const PRIO_ICONS = {
+  Blocker: '<circle cx="8" cy="8" r="6.25"/><path d="M4.75 8h6.5"/>',
+  Critical: '<path d="M4 8.25 8 4.5l4 3.75M4 12 8 8.25 12 12"/>',
+  Major: '<path d="M4 10.25 8 6.25l4 4"/>',
+  Minor: '<path d="M4 5.75 8 9.75l4-4"/>',
+  Trivial: '<path d="M4 4 8 7.75 12 4M4 7.75 8 11.5l4-3.75"/>'
+};
+function prioIcon(priority) {
+  if (!PRIO_ICONS[priority]) return null;
+  const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  for (const [k, v] of Object.entries({ viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', class: 'app-prio-icon' })) s.setAttribute(k, v);
+  s.innerHTML = PRIO_ICONS[priority];
+  return s;
+}
+
 // Lyne: <sbb-chip-label> – Prioritätsfarben sind app-spezifisch
-const chip = (priority, extra = {}) => el('span', { class: 'sbb-chip-label app-prio app-prio--' + (priority ? priority.toLowerCase() : 'none'), ...extra }, priority || 'Ohne Einstufung');
+const chip = (priority, extra = {}) => el('span', { class: 'sbb-chip-label app-prio app-prio--' + (priority ? priority.toLowerCase() : 'none'), ...extra }, [prioIcon(priority), priority || 'Ohne Einstufung']);
 const optionLabel = (qid, value) => (questions.find(q => q.id === qid)?.options.find(o => o[0] === value) || [])[1] || value;
 
 // ---------- Navigation (wie Referenz) ----------
@@ -185,7 +202,7 @@ function priorityScale(result) {
   const provisional = result.confidence === 'Niedrig';
   const items = [...Priority].reverse().map(p => {
     const active = p === result.priority;
-    return el('li', { class: 'app-scale__step app-prio--' + p.toLowerCase() + (active ? ' is-active' : '') + (active && provisional ? ' is-provisional' : ''), 'aria-current': active ? 'true' : undefined }, p);
+    return el('li', { class: 'app-scale__step app-prio--' + p.toLowerCase() + (active ? ' is-active' : '') + (active && provisional ? ' is-provisional' : ''), 'aria-current': active ? 'true' : undefined }, [prioIcon(p), el('span', { class: 'app-scale__label' }, p)]);
   });
   return el('ol', { class: 'app-scale', 'aria-label': 'Prioritätsstufen von Blocker bis Trivial' }, items);
 }
@@ -215,7 +232,7 @@ function resultView() {
     el('div', { class: 'app-priority' }, [
       el('div', {}, [
         el('span', { class: 'app-label', 'data-test': 'priority-label' }, provisional ? 'Jira-Priorität · vorläufig' : 'Empfohlene Jira-Priorität'),
-        el('div', { class: 'app-priority__value', 'data-test': 'priority' }, result.priority || 'Nicht belastbar einstufbar')
+        el('div', { class: 'app-priority__value' + (result.priority ? ' app-prio--' + result.priority.toLowerCase() : ''), 'data-test': 'priority' }, [prioIcon(result.priority), result.priority || 'Nicht belastbar einstufbar'])
       ]),
       el('div', { class: 'app-priority__conf' }, [
         el('span', { class: 'app-label' }, 'Belastbarkeit'),

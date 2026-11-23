@@ -248,6 +248,17 @@ a { color: var(--sbb-color-primary); text-underline-offset: 0.15em; }
 .sbb-chip-label.app-prio { background: var(--prio-bg); color: var(--prio-fg); }
 .sbb-chip-label.app-prio--none { border: var(--sbb-border-width-1x) dashed var(--sbb-color-storm); }
 
+/* Prioritäts-Icons */
+.app-prio-icon { width: 1em; height: 1em; flex: none; }
+.sbb-chip-label .app-prio-icon { width: 0.875rem; height: 0.875rem; margin: 0 0.3rem 0 -0.15rem; }
+.app-priority__value { display: inline-flex; align-items: center; gap: 0.6rem; }
+.app-priority__value .app-prio-icon { width: 0.8em; height: 0.8em; padding: 0.2em; box-sizing: content-box; border-radius: var(--sbb-border-radius-4x); background: var(--prio-bg); color: var(--prio-fg); stroke-width: 2.25; }
+.app-scale__step { display: flex; align-items: center; justify-content: center; gap: 0.3rem; }
+.app-scale__step .app-prio-icon { width: 0.875rem; height: 0.875rem; opacity: .7; }
+.app-scale__step.is-active .app-prio-icon { opacity: 1; }
+.app-scale__label { overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 26rem) { .app-scale__step .app-prio-icon { display: none; } }
+
 /* Begründungen */
 .app-reasons { list-style: none; padding: 0; margin: var(--sbb-spacing-fixed-3x) 0; display: grid; gap: var(--sbb-spacing-fixed-2x); }
 .app-reason { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr); gap: var(--sbb-spacing-fixed-3x); align-items: baseline; padding: var(--sbb-spacing-fixed-3x) var(--sbb-spacing-fixed-4x); border-radius: var(--sbb-border-radius-4x); background: var(--app-color-page); color: var(--sbb-color-iron); }
