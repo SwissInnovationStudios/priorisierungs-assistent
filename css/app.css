@@ -248,6 +248,56 @@ a { color: var(--sbb-color-primary); text-underline-offset: 0.15em; }
 .sbb-chip-label.app-prio { background: var(--prio-bg); color: var(--prio-fg); }
 .sbb-chip-label.app-prio--none { border: var(--sbb-border-width-1x) dashed var(--sbb-color-storm); }
 
+/* Live-Meter: Mindeststufe aus den bisherigen Antworten. Desktop vertikal neben der Frage, Handy horizontal darüber. */
+.app-qlayout { display: grid; grid-template-columns: minmax(0, 1fr) 7.25rem; gap: var(--sbb-spacing-fixed-6x); align-items: start; }
+.app-meter { position: sticky; top: calc(var(--app-header-height) + var(--sbb-spacing-fixed-4x)); display: grid; gap: var(--sbb-spacing-fixed-2x); justify-items: start; }
+.app-meter__label { color: var(--app-color-muted); font-size: var(--sbb-typo-scale-0-75x); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.app-meter__body { display: grid; grid-template-columns: 0.75rem auto; gap: var(--sbb-spacing-fixed-2x); height: 15rem; }
+.app-meter__track { position: relative; border-radius: var(--sbb-border-radius-16x); background: var(--sbb-color-cloud); overflow: hidden; }
+.app-meter__fill { position: absolute; inset: auto 0 0 0; height: calc(var(--p, 0) * 100%); border-radius: inherit; background: var(--sbb-color-storm);
+  transition: height .7s cubic-bezier(.34, 1.4, .64, 1), background-color .5s ease; }
+.app-meter[data-level="trivial"] .app-meter__fill { background: var(--sbb-color-graphite); }
+.app-meter[data-level="minor"] .app-meter__fill { background: #6f8fb3; }
+.app-meter[data-level="major"] .app-meter__fill { background: #e0a038; }
+.app-meter[data-level="critical"] .app-meter__fill { background: var(--app-prio-critical-bg); }
+.app-meter[data-level="blocker"] .app-meter__fill { background: var(--app-prio-blocker-bg); }
+.app-meter__stops { list-style: none; margin: 0; padding: 0; display: grid; grid-template-rows: repeat(5, 1fr); }
+.app-meter__stop { display: flex; align-items: center; gap: 0.35rem; font-size: var(--sbb-typo-scale-0-8125x); color: var(--sbb-color-metal); transition: color .4s ease; }
+.app-meter__stop .app-prio-icon { width: 0.875rem; height: 0.875rem; }
+.app-meter__stop.is-on { color: var(--app-color-text); }
+.app-meter[data-level="trivial"] .app-prio--trivial, .app-meter[data-level="minor"] .app-prio--minor, .app-meter[data-level="major"] .app-prio--major,
+.app-meter[data-level="critical"] .app-prio--critical, .app-meter[data-level="blocker"] .app-prio--blocker { font-weight: 700; }
+.app-meter__now { display: none; }
+@media (max-width: 40rem) {
+  .app-qlayout { grid-template-columns: 1fr; }
+  .app-meter { order: -1; position: static; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; justify-items: stretch; width: 100%; gap: var(--sbb-spacing-fixed-3x); margin-bottom: var(--sbb-spacing-fixed-2x); }
+  .app-meter__body { display: block; height: 0.5rem; }
+  .app-meter__track { height: 100%; }
+  .app-meter__fill { inset: 0 auto 0 0; height: 100%; width: calc(var(--p, 0) * 100%); transition: width .7s cubic-bezier(.34, 1.4, .64, 1), background-color .5s ease; }
+  .app-meter__stops { display: none; }
+  .app-meter__now { display: block; font-size: var(--sbb-typo-scale-0-875x); font-weight: 700; }
+}
+
+/* Ursache eines Anstiegs */
+.app-cause { display: block; margin: 0 0 var(--sbb-spacing-fixed-5x); font-size: var(--sbb-typo-scale-0-875x); min-height: 1.4em; }
+.app-cause .app-prio-icon { width: 0.875rem; height: 0.875rem; vertical-align: -0.1em; margin-right: 0.3rem; }
+.app-cause.is-new { animation: app-rise .6s cubic-bezier(.34, 1.4, .64, 1); }
+@keyframes app-rise { from { transform: translateY(0.6rem); } }
+
+/* Leuchten hinter der Karte in der Farbe der aktuellen Stufe (dezent, Eskalationshinweis bleibt dominant) */
+#wizard { transition: box-shadow .8s ease; }
+#wizard.app-glow { box-shadow: var(--app-shadow), 0 0 0 1px color-mix(in srgb, var(--prio-bg) 55%, transparent), 0 1.25rem 3.5rem -0.75rem color-mix(in srgb, var(--prio-bg) 70%, transparent); }
+#wizard.app-glow.app-prio--trivial, #wizard.app-glow.app-prio--minor { box-shadow: var(--app-shadow), 0 0 0 1px color-mix(in srgb, var(--prio-fg) 18%, transparent), 0 1.25rem 3.5rem -0.75rem color-mix(in srgb, var(--prio-fg) 22%, transparent); }
+
+/* «Was würde die Stufe heben?» */
+.app-raise { margin-top: var(--sbb-spacing-fixed-5x); padding: var(--sbb-spacing-fixed-4x); border: var(--sbb-border-width-1x) dashed var(--sbb-color-storm); border-radius: var(--sbb-border-radius-4x); }
+.app-raise h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; }
+.app-raise__list { margin: var(--sbb-spacing-fixed-3x) 0; padding-left: 1.1rem; display: grid; gap: var(--sbb-spacing-fixed-2x); font-size: var(--sbb-typo-scale-0-875x); }
+
+/* Vergleichsliste: Aktionen je Fall */
+.app-row__actions { display: flex; gap: 0.1rem; margin-top: -0.25rem; }
+.app-row.is-editing { background: var(--app-color-warn-bg); }
+
 /* Prioritäts-Icons */
 .app-prio-icon { width: 1em; height: 1em; flex: none; }
 .sbb-chip-label .app-prio-icon { width: 0.875rem; height: 0.875rem; margin: 0 0.3rem 0 -0.15rem; }
@@ -298,7 +348,7 @@ a { color: var(--sbb-color-primary); text-underline-offset: 0.15em; }
 .app-row__name { font-weight: 700; overflow-wrap: anywhere; line-height: 1.35; }
 .app-row__meta { display: flex; flex-wrap: wrap; gap: 0.35rem 0.6rem; align-items: center; margin-top: 0.3rem; color: var(--app-color-muted); font-size: var(--sbb-typo-scale-0-8125x); }
 .app-row__bonus { margin-top: 0.25rem; color: var(--app-color-muted); font-size: var(--sbb-typo-scale-0-75x); }
-.app-row .sbb-mini-button { margin-top: -0.25rem; }
+
 .app-empty { padding: var(--sbb-spacing-fixed-5x); border: var(--sbb-border-width-1x) dashed var(--sbb-color-storm); border-radius: var(--sbb-border-radius-4x); color: var(--app-color-muted); text-align: center; font-size: var(--sbb-typo-scale-0-875x); }
 .app-only-stacked { display: none; }
 @media (max-width: 56rem) { .app-only-stacked { display: inline-flex; } }

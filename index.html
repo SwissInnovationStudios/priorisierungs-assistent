@@ -51,11 +51,12 @@
   <details class="sbb-card sbb-expansion-panel app-about">
     <summary class="sbb-expansion-panel__header">Wie funktioniert die Bewertungslogik?</summary>
     <div class="sbb-expansion-panel__content app-stack">
-      <p>Für die Jira-Priorität gewinnt die höchste zutreffende Regel. Auswirkungen, Betriebs- und Sicherheitslage, Fristfolgen, Abhängigkeiten und Nutzen werden geprüft. Aufwand ändert die Prioritätsstufe nicht.</p>
-      <p>Ein nahes Datum allein ist kein Grund für eine hohe Priorität: Entscheidend ist, was passiert, wenn die Frist verpasst wird. Ein Vorgang, der andere Arbeiten blockiert, ist nicht automatisch ein Blocker.</p>
-      <p>Startklare und ausreichend beurteilbare Fälle werden separat nach Prioritätsstufe und Zuschlägen für Behandlungsart, wirksame Frist, Abhängigkeit und kleinen Aufwand eingeordnet. Bei Gleichstand gilt die Speicherreihenfolge. Unklare oder noch nicht startklare Fälle werden getrennt angezeigt. Die Liste ist kein Jira-Rank.</p>
+      <p><strong>Jira-Priorität:</strong> Jede Antwort kann eine Regel auslösen. Die höchste zutreffende Regel bestimmt die Stufe; weitere Gründe heben sie nicht zusätzlich an. Geprüft werden Betriebs- und Sicherheitslage, Auswirkungen, Fristfolgen, Abhängigkeiten und Nutzen. Aufwand ändert die Stufe nicht.</p>
+      <p>Ein nahes Datum allein ist kein Grund für eine hohe Priorität: Entscheidend ist, was passiert, wenn die Frist verpasst wird. Droht innerhalb von 24 Stunden ein schwerwiegender Schaden ohne Übergangslösung, ist das ein Blocker. Eine Blockade anderer Arbeiten hebt allein höchstens auf Major; Critical erst, wenn die Folgen erheblich sind.</p>
+      <p><strong>Bearbeitungsart</strong> nach Kanban Classes of Service: Expedite bei Ausfall oder akutem Vorfall, Fixed Date nur bei einer Frist mit erheblichen Folgen, Intangible für langfristig Wichtiges ohne Zeitdruck, sonst Standard.</p>
+      <p><strong>Vergleichsliste:</strong> Startklare und ausreichend beurteilbare Fälle werden nach Stufe geordnet. Innerhalb derselben Stufe ziehen Expedite, eine wirksame Frist, Abhängigkeiten und kleiner Aufwand nach vorne – nie über die nächste Stufe hinaus. Bei Gleichstand gilt die Speicherreihenfolge. Unklare oder nicht startklare Fälle stehen getrennt. Die Liste ist kein Jira-Rank.</p>
       <p>Der Assistent gibt Empfehlungen. Das Team bewertet eigenständig, der Product Owner entscheidet bei Priorisierungskonflikten oder Unklarheiten. Bestehende Betriebs- und Sicherheitsprozesse haben Vorrang.</p>
-      <p class="sbb-text-s app-muted app-mb-0">Die Regeln sind ein Workshop-Entwurf und keine offizielle SBB-Richtlinie. Nicht dokumentierte Detailregeln, etwa die genaue Security-Grenze zwischen Major und Critical, sind Annahmen. Die Anwendung ersetzt keine zuständigen Eskalationsprozesse.</p>
+      <p class="sbb-text-s app-muted app-mb-0">Die Regeln sind ein Workshop-Entwurf und keine offizielle SBB-Richtlinie. Die Anwendung ersetzt keine zuständigen Eskalationsprozesse.</p>
     </div>
   </details>
 

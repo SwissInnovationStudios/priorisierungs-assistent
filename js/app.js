@@ -1,8 +1,8 @@
 // Oberfläche des Priorisierungs-Assistenten. Enthält keine Bewertungsregeln – diese liegen vollständig in engine.js.
-// Navigation (begin/back/advance) entspricht 1:1 dem Inline-Prototyp v0.1.
+// Navigation (begin/back/advance) entspricht dem Inline-Prototyp v0.1; dazu Bearbeiten gespeicherter Fälle und Live-Meter.
 import { questions, activeQuestions, evaluate, liveAlerts, orderCases, Priority, RULESET_VERSION } from './engine.js';
-import { reasonPriority, bonusList, serviceInfo } from './explain.js';
-import { loadCases, saveCases, storageAvailable } from './storage.js';
+import { reasonPriority, bonusList, serviceInfo, raiseHints } from './explain.js';
+import { loadCases, saveCases, storageAvailable, newId } from './storage.js';
 
 const PUBLIC_URL = 'https://swissinnovationstudios.github.io/priorisierungs-assistent/';
 
@@ -15,6 +15,9 @@ let a = {}, name = '', view = 'start', current = null, saved = false;
 let savedCase = null;        // Referenz auf den zuletzt gespeicherten Fall (Hervorhebung, Position)
 let confirmClear = false;
 let shownNotes = '';         // für role="alert" nur beim ersten Erscheinen eines Hinweises
+let editingId = null;        // Fall, der gerade bearbeitet wird
+let positionBefore = null;   // Platz des bearbeiteten Falls vor der Änderung
+let meterFrom;               // Stufe vor dem letzten «Weiter» (nur dann animiert der Meter)
 
 // ---------- DOM-Helfer ----------
 function el(tag, props = {}, content = '') {
@@ -39,6 +42,7 @@ const ICONS = {
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/>',
   success: '<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/>',
   close: '<path d="M6 6l12 12M18 6 6 18"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/>',
   qr: '<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 19h1.5M19.5 14v2"/>',
   plus: '<path d="M12 5v14M5 12h14"/>'
 };
@@ -85,7 +89,19 @@ const chip = (priority, extra = {}) => el('span', { class: 'sbb-chip-label app-p
 const optionLabel = (qid, value) => (questions.find(q => q.id === qid)?.options.find(o => o[0] === value) || [])[1] || value;
 
 // ---------- Navigation (wie Referenz) ----------
-function newCase() { a = {}; name = ''; view = 'start'; current = null; saved = false; savedCase = null; shownNotes = ''; render(true); window.scrollTo({ top: 0 }); }
+function newCase() { a = {}; name = ''; view = 'start'; current = null; saved = false; savedCase = null; shownNotes = ''; editingId = null; positionBefore = null; meterFrom = undefined; render(true); window.scrollTo({ top: 0 }); }
+
+// Gespeicherten Fall wieder öffnen: Auswertung mit allen Antworten, «Ändern» springt zur Frage, «Speichern» aktualisiert den Fall.
+function startEdit(id) {
+  const c = cases.find(x => x.id === id);
+  if (!c || !c.answers) return;
+  const { ordered } = orderCases(cases);
+  const pos = ordered.findIndex(x => x.id === id);
+  positionBefore = pos < 0 ? null : pos + 1;
+  a = { ...c.answers }; name = c.name; editingId = id; saved = false; savedCase = null; shownNotes = ''; meterFrom = undefined;
+  view = 'result'; render(true);
+  wiz.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 document.getElementById('new-case').addEventListener('click', newCase);
 
 function begin() { view = 'question'; current = activeQuestions(a)[0].id; render(true); }
@@ -102,10 +118,12 @@ function back() {
 
 function jumpTo(qid) {
   if (!activeQuestions(a).some(q => q.id === qid)) return;
-  view = 'question'; current = qid; render(true);
+  view = 'question'; current = qid; meterFrom = undefined; render(true);
 }
 
 function advance(value) {
+  const before = activeQuestions(a);
+  meterFrom = levelIndex(prefixResult(before, before.findIndex(q => q.id === current)).priority);
   a[current] = value;
   // Antworten aus Zweigen vergessen, die nach dem Zurückgehen nicht mehr gelten.
   const path = activeQuestions(a);
@@ -123,8 +141,46 @@ function comparisonPosition(result) {
     const pos = ordered.findIndex(c => cases[c.i] === savedCase);
     return pos < 0 ? null : { pos: pos + 1, of: ordered.length, projected: false };
   }
+  if (editingId) {
+    const list = cases.map(c => (c.id === editingId ? { ...c, result } : c));
+    const idx = list.findIndex(c => c.id === editingId);
+    const { ordered } = orderCases(list);
+    return { pos: ordered.findIndex(c => c.i === idx) + 1, of: ordered.length, projected: true };
+  }
   const { ordered } = orderCases([...cases, { name: '·', result }]);
   return { pos: ordered.findIndex(c => c.i === cases.length) + 1, of: ordered.length, projected: true };
+}
+
+// ---------- Live-Meter ----------
+// Zeigt die Mindeststufe aus den Antworten VOR der aktuellen Frage. Er reagiert also erst nach «Weiter»,
+// nicht beim Antippen einer Option. Die Stufe kann beim Vorwärtsbeantworten nur steigen (höchste Regel gewinnt).
+const levelIndex = p => (p ? Priority.indexOf(p) : -1);
+function prefixResult(path, i) {
+  const pa = {};
+  for (const q of path.slice(0, Math.max(i, 0))) if (q.id in a) pa[q.id] = a[q.id];
+  return evaluate(pa);
+}
+function setGlow(level) {
+  wiz.classList.remove('app-glow', ...Priority.map(p => 'app-prio--' + p.toLowerCase()));
+  if (level >= 0) wiz.classList.add('app-glow', 'app-prio--' + Priority[level].toLowerCase());
+}
+function meter(level, from) {
+  const start = from === undefined ? level : from;
+  const fill = el('div', { class: 'app-meter__fill' });
+  const apply = (lv, node) => {
+    node.style.setProperty('--p', String((lv + 1) / 5));
+    node.dataset.level = lv >= 0 ? Priority[lv].toLowerCase() : 'none';
+    node.querySelectorAll('.app-meter__stop').forEach((s, idx) => s.classList.toggle('is-on', 4 - idx <= lv));
+  };
+  const stops = [...Priority].reverse().map(p => el('li', { class: 'app-meter__stop app-prio--' + p.toLowerCase() }, [prioIcon(p), el('span', {}, p)]));
+  const box = el('div', { class: 'app-meter', 'aria-hidden': 'true' }, [
+    el('span', { class: 'app-meter__label' }, 'Mindeststufe'),
+    el('div', { class: 'app-meter__body' }, [el('div', { class: 'app-meter__track' }, [fill]), el('ol', { class: 'app-meter__stops' }, stops)]),
+    el('span', { class: 'app-meter__now' }, level >= 0 ? Priority[level] : 'offen')
+  ]);
+  apply(start, box);
+  if (start !== level) requestAnimationFrame(() => requestAnimationFrame(() => apply(level, box)));
+  return box;
 }
 
 // ---------- Ansichten ----------
@@ -157,11 +213,17 @@ function questionView() {
   const q = path[i];
   const total = path.length;
 
+  const pre = prefixResult(path, i);
+  const level = levelIndex(pre.priority);
+  const rose = meterFrom !== undefined && level > meterFrom;
+  const cause = rose ? pre.reasons.find(r => reasonPriority(r) === Priority[level]) : null;
+  setGlow(level);
+
   wiz.append(el('h1', { class: 'sbb-screen-reader-only' }, 'Vorgang bewerten: ' + (name.trim() || 'ohne Bezeichnung')));
   wiz.append(el('div', { class: 'app-progress' }, [
     el('div', { class: 'app-progress__meta' }, [
       txt(`Frage ${i + 1} von ${total}`, 'app-overline app-mb-0'),
-      txt(name.trim() || 'Ohne Bezeichnung', 'sbb-text-xs app-muted app-mb-0 app-truncate')
+      txt((editingId ? 'Bearbeiten · ' : '') + (name.trim() || 'Ohne Bezeichnung'), 'sbb-text-xs app-muted app-mb-0 app-truncate')
     ]),
     el('div', { class: 'app-progress__bar', role: 'progressbar', 'aria-valuemin': '1', 'aria-valuemax': String(total), 'aria-valuenow': String(i + 1), 'aria-label': `Frage ${i + 1} von ${total}` },
       [el('div', { class: 'app-progress__fill', style: `width:${((i + 1) / total) * 100}%` })])
@@ -195,7 +257,14 @@ function questionView() {
     el('div', { class: 'sbb-action-group sbb-action-group--split' }, [button('Zurück', back, 'sbb-secondary-button'), next])
   ]);
   form.addEventListener('submit', e => { e.preventDefault(); if (selected) advance(selected); });
-  wiz.append(form);
+
+  // Ursache des Anstiegs (sichtbar und für Screenreader), danach Meter neben der Frage.
+  wiz.append(el('p', { class: 'app-cause' + (cause ? ' is-new' : ''), role: 'status', 'data-test': 'meter' },
+    cause ? [prioIcon(Priority[level]), el('strong', {}, `Neu ${Priority[level]}: `), cause]
+      : level >= 0 ? [el('span', { class: 'app-muted' }, `Mindeststufe bis jetzt: ${Priority[level]}. Weitere Antworten können sie noch anheben.`)]
+      : [el('span', { class: 'app-muted' }, 'Noch keine Einstufung – die Mindeststufe erscheint nach den ersten Antworten.')]));
+  wiz.append(el('div', { class: 'app-qlayout' }, [form, meter(level, meterFrom)]));
+  meterFrom = undefined;
 }
 
 function priorityScale(result) {
@@ -212,7 +281,15 @@ function resultView() {
   const provisional = result.confidence === 'Niedrig';
   const position = comparisonPosition(result);
 
-  wiz.append(txt('Auswertung', 'app-overline'), heading(name.trim() || 'Deine Empfehlung'));
+  setGlow(levelIndex(result.priority));
+  wiz.append(txt(editingId ? 'Bearbeiten' : 'Auswertung', 'app-overline'), heading(name.trim() || 'Deine Empfehlung'));
+  if (editingId) {
+    const input = el('input', { id: 'edit-title', class: 'sbb-input', type: 'text', maxlength: '120', autocomplete: 'off' });
+    input.value = name;
+    input.addEventListener('input', () => { name = input.value; });
+    wiz.append(el('div', { class: 'sbb-form-field app-mt-4' }, [el('label', { for: 'edit-title', class: 'sbb-form-field__label' }, 'Bezeichnung'), input]),
+      txt('Antworten unter «Deine Antworten» ändern, dann «Änderungen speichern». Der Fall behält seinen Platz in der Liste und wird neu eingeordnet.', 'sbb-text-xs app-muted'));
+  }
 
   if (result.alerts.length) wiz.append(notification('error', result.alerts, 'Eskalationshinweise', { role: 'alert', 'data-test': 'alerts' }));
 
@@ -246,7 +323,8 @@ function resultView() {
       ? el('ul', { class: 'app-reasons' }, reasons)
       : txt('Es liegen noch nicht genug Angaben für eine fachliche Einstufung vor.', 'app-muted'),
     reasons.length ? txt('Die höchste zutreffende Regel bestimmt die Stufe. Weitere Kriterien heben sie nicht zusätzlich an. Der Aufwand zählt hier nicht.', 'sbb-text-xs app-muted') : null,
-    result.open.length ? notification('warn', ['Offene Angaben: ' + result.open.join(', ') + '.'], 'Noch zu klären', { 'data-test': 'open' }) : null
+    result.open.length ? notification('warn', ['Offene Angaben: ' + result.open.join(', ') + '.'], 'Noch zu klären', { 'data-test': 'open' }) : null,
+    raiseBlock(a)
   ]));
 
   // ---- Ergebnis 2: Bearbeitungsempfehlung ----
@@ -267,10 +345,11 @@ function resultView() {
     ]),
     position
       ? el('div', { class: 'app-bonuses' }, [
-          el('span', { class: 'app-label' }, 'Einordnung innerhalb der Stufe'),
+          el('span', { class: 'app-label' }, 'Vorziehen innerhalb der Stufe'),
           bonuses.length
             ? el('ul', { class: 'app-bonus-list' }, bonuses.map(b => el('li', { class: 'app-bonus' }, [el('strong', {}, '+' + b.points), ' ' + b.label])))
-            : txt('Keine Zuschläge – Reihenfolge nach Stufe, bei Gleichstand nach Speicherzeitpunkt.', 'sbb-text-xs app-muted app-mb-0')
+            : txt('Keine Zuschläge – Reihenfolge nach Stufe, bei Gleichstand nach Speicherzeitpunkt.', 'sbb-text-xs app-muted app-mb-0'),
+          bonuses.length ? txt('Zuschläge ordnen nur innerhalb derselben Stufe – sie heben nie über die nächste Stufe.', 'sbb-text-xs app-muted app-mb-0 app-mt-1') : null
         ])
       : null
   ]));
@@ -280,7 +359,7 @@ function resultView() {
     el('div', { class: 'app-answers__body' }, [el('span', { class: 'app-answers__q' }, q.title), el('span', { class: 'app-answers__a' }, optionLabel(q.id, a[q.id]))]),
     saved ? null : el('button', { type: 'button', class: 'sbb-transparent-button app-answers__edit', click: () => jumpTo(q.id), 'aria-label': `Antwort ändern: ${q.title}` }, 'Ändern')
   ]));
-  wiz.append(el('details', { class: 'sbb-expansion-panel app-mt-4' }, [
+  wiz.append(el('details', { class: 'sbb-expansion-panel app-mt-4', open: editingId ? true : undefined }, [
     el('summary', { class: 'sbb-expansion-panel__header' }, 'Deine Antworten'),
     el('div', { class: 'sbb-expansion-panel__content' }, [
       saved ? null : txt('Eine Antwort ändern und mit «Weiter» zur neuen Auswertung – praktisch, um Was-wäre-wenn-Fragen zu zeigen.', 'sbb-text-xs app-muted'),
@@ -289,12 +368,22 @@ function resultView() {
   ]));
 
   if (saved) {
-    wiz.append(notification('success', [position ? `Platz ${position.pos} von ${position.of} unter den startklaren Fällen.` : 'Unter «Noch zu klären» eingetragen.'], 'In der Vergleichsliste gespeichert', { role: 'status' }));
+    const where = position ? `Platz ${position.pos} von ${position.of} unter den startklaren Fällen` : 'Unter «Noch zu klären» eingetragen';
+    const moved = positionBefore && position && positionBefore !== position.pos ? ` (vorher Platz ${positionBefore})` : '';
+    wiz.append(notification('success', [where + moved + '.'], savedCase && savedCase.updatedAt ? 'Änderungen gespeichert' : 'In der Vergleichsliste gespeichert', { role: 'status' }));
   }
-  const save = button(saved ? 'Gespeichert' : 'Zur Vergleichsliste hinzufügen', () => {
+  const save = button(saved ? 'Gespeichert' : editingId ? 'Änderungen speichern' : 'Zur Vergleichsliste hinzufügen', () => {
     if (saved) return;
-    savedCase = { name: name.trim() || 'Fall ' + (cases.length + 1), result, answers: { ...a }, savedAt: new Date().toISOString() };
-    cases.push(savedCase);
+    if (editingId) {
+      const idx = cases.findIndex(c => c.id === editingId);
+      savedCase = { ...cases[idx], name: name.trim() || cases[idx].name, result, answers: { ...a }, updatedAt: new Date().toISOString() };
+      cases[idx] = savedCase;
+      editingId = null;
+    } else {
+      savedCase = { id: newId(), name: name.trim() || 'Fall ' + (cases.length + 1), result, answers: { ...a }, savedAt: new Date().toISOString() };
+      cases.push(savedCase);
+      positionBefore = null;
+    }
     saveCases(cases);
     saved = true;
     render(true);
@@ -302,7 +391,18 @@ function resultView() {
   save.disabled = saved;
   wiz.append(el('div', { class: 'sbb-action-group sbb-action-group--split' }, saved
     ? [button('Neuer Fall', newCase, 'sbb-secondary-button'), button('Zur Vergleichsliste', () => compare.scrollIntoView({ behavior: 'smooth', block: 'start' }), 'sbb-transparent-button app-only-stacked')]
-    : [button('Zurück', back, 'sbb-secondary-button'), save]));
+    : [button(editingId ? 'Abbrechen' : 'Zurück', editingId ? newCase : back, 'sbb-secondary-button'), save]));
+}
+
+// «Was würde die Stufe heben?» – rechnerische Varianten aus der Engine, keine Aufforderung, Antworten anzupassen.
+function raiseBlock(answers) {
+  const { target, hints } = raiseHints(answers);
+  if (!target || !hints.length) return null;
+  return el('div', { class: 'app-raise', 'data-test': 'raise' }, [
+    el('h3', { class: 'sbb-title sbb-title--4' }, ['Was würde die Stufe auf ', chip(target), ' heben?']),
+    el('ul', { class: 'app-raise__list' }, hints.map(h => el('li', {}, h.changes.flatMap((c, k) => [k ? ' und ' : null, el('strong', {}, c.label + ': '), c.value]).filter(Boolean)))),
+    txt('Rechnerische Was-wäre-wenn-Varianten: Sie zeigen, wo die Grenze liegt. Antworten bitte nur ändern, wenn sie tatsächlich anders sind.', 'sbb-text-xs app-muted app-mb-0')
+  ]);
 }
 
 function comparisonView() {
@@ -315,17 +415,26 @@ function comparisonView() {
   if (!cases.length) compare.append(el('div', { class: 'app-empty' }, 'Bewerte einen Fall und füge ihn der Liste hinzu. Ab zwei Fällen siehst du, welcher zuerst bearbeitet werden sollte.'));
 
   const { ordered, pending } = orderCases(cases);
-  const remove = index => () => { const [gone] = cases.splice(index, 1); if (gone === savedCase) { savedCase = null; saved = false; } saveCases(cases); render(false); };
+  const remove = index => () => {
+    const [gone] = cases.splice(index, 1);
+    if (gone === savedCase) { savedCase = null; saved = false; }
+    if (gone.id === editingId) { editingId = null; positionBefore = null; }
+    saveCases(cases); render(false);
+  };
   const row = (c, n, meta, isPending = false) => {
     const bonuses = isPending ? [] : bonusList(c.result.bonuses);
-    return el('li', { class: 'app-row' + (cases[c.i] === savedCase ? ' is-new' : '') }, [
+    const isEditing = c.id && c.id === editingId;
+    return el('li', { class: 'app-row' + (cases[c.i] === savedCase ? ' is-new' : '') + (isEditing ? ' is-editing' : '') }, [
       el('span', { class: 'app-row__pos' + (isPending ? ' app-row__pos--pending' : ''), 'aria-hidden': 'true' }, n),
       el('div', { class: 'app-row__body' }, [
         el('div', { class: 'app-row__name', 'data-test': isPending ? 'pending' : 'ordered' }, c.name),
         el('div', { class: 'app-row__meta' }, [chip(c.result.priority), el('span', {}, meta)]),
         bonuses.length ? el('div', { class: 'app-row__bonus' }, bonuses.map(b => `+${b.points} ${b.label}`).join(' · ')) : null
       ]),
-      el('button', { type: 'button', class: 'sbb-mini-button', 'aria-label': `Fall «${c.name}» entfernen`, title: 'Entfernen', click: remove(c.i) }, [icon('close', 'app-icon app-icon--s')])
+      el('div', { class: 'app-row__actions' }, [
+        c.answers ? el('button', { type: 'button', class: 'sbb-mini-button', 'aria-label': `Fall «${c.name}» bearbeiten`, title: 'Bearbeiten', 'data-test': 'edit', click: () => startEdit(c.id) }, [icon('edit', 'app-icon app-icon--s')]) : null,
+        el('button', { type: 'button', class: 'sbb-mini-button', 'aria-label': `Fall «${c.name}» entfernen`, title: 'Entfernen', click: remove(c.i) }, [icon('close', 'app-icon app-icon--s')])
+      ])
     ]);
   };
 
@@ -344,6 +453,7 @@ function comparisonView() {
 
 function render(focus = false) {
   wiz.replaceChildren();
+  if (view === 'start') setGlow(-1);
   ({ start: startView, question: questionView, result: resultView })[view]();
   comparisonView();
   if (focus) wiz.querySelector('[data-focus]')?.focus({ preventScroll: true });
