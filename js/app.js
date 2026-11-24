@@ -406,13 +406,18 @@ function raiseBlock(answers) {
 }
 
 function comparisonView() {
-  compare.replaceChildren();
-  compare.append(
+  // Kopf und Fuss bleiben stehen, nur die Liste scrollt (Desktop; siehe .app-compare in app.css).
+  const head = el('div', { class: 'app-compare__head' });
+  const body = el('div', { class: 'app-compare__body', tabindex: '0', role: 'region', 'aria-label': 'Gespeicherte Fälle' });
+  const foot = el('div', { class: 'app-compare__foot' });
+  const keepScroll = compare.querySelector('.app-compare__body')?.scrollTop || 0;
+  compare.replaceChildren(el('div', { class: 'app-compare' }, [head, body, foot]));
+  head.append(
     txt('Vergleichsliste', 'app-overline'),
     el('h2', { class: 'sbb-title sbb-title--2', id: 'compare-title' }, cases.length + ' ' + (cases.length === 1 ? 'Fall' : 'Fälle')),
-    txt('Reihenfolge nur unter den hier gespeicherten, startklaren Fällen. Kein Jira-Rank.', 'sbb-text-xs app-muted')
+    txt('Reihenfolge nur unter den hier gespeicherten, startklaren Fällen. Kein Jira-Rank.', 'sbb-text-xs app-muted app-mb-0')
   );
-  if (!cases.length) compare.append(el('div', { class: 'app-empty' }, 'Bewerte einen Fall und füge ihn der Liste hinzu. Ab zwei Fällen siehst du, welcher zuerst bearbeitet werden sollte.'));
+  if (!cases.length) body.append(el('div', { class: 'app-empty' }, 'Bewerte einen Fall und füge ihn der Liste hinzu. Ab zwei Fällen siehst du, welcher zuerst bearbeitet werden sollte.'));
 
   const { ordered, pending } = orderCases(cases);
   const remove = index => () => {
@@ -438,17 +443,24 @@ function comparisonView() {
     ]);
   };
 
-  if (ordered.length) compare.append(el('h3', { class: 'sbb-title sbb-title--4 app-mt-4' }, 'Startklar · empfohlene Reihenfolge'),
+  if (ordered.length) body.append(el('h3', { class: 'sbb-title sbb-title--4 app-mt-4' }, 'Startklar · empfohlene Reihenfolge'),
     el('ol', { class: 'app-rows' }, ordered.map((c, n) => row(c, String(n + 1), c.result.service))));
-  if (pending.length) compare.append(el('h3', { class: 'sbb-title sbb-title--4 app-mt-4' }, 'Noch zu klären'),
+  if (pending.length) body.append(el('h3', { class: 'sbb-title sbb-title--4 app-mt-4' }, 'Noch zu klären'),
     el('ul', { class: 'app-rows' }, pending.map(c => row(c, '?', c.result.gates.join(' · '), true))));
 
   if (cases.length) {
-    compare.append(el('div', { class: 'sbb-action-group sbb-action-group--end' }, confirmClear
+    foot.append(el('div', { class: 'sbb-action-group sbb-action-group--end' }, confirmClear
       ? [txt('Alle Fälle löschen?', 'sbb-text-s app-mb-0'), button('Abbrechen', () => { confirmClear = false; render(false); }, 'sbb-transparent-button'), button('Ja, löschen', () => { cases = []; savedCase = null; saved = false; confirmClear = false; saveCases(cases); render(false); }, 'sbb-secondary-button')]
       : [button('Liste leeren', () => { confirmClear = true; render(false); }, 'sbb-transparent-button')]));
   }
-  if (!storageAvailable()) compare.append(txt('Lokales Speichern ist nicht verfügbar. Die Liste gilt nur bis zum Schliessen oder Neuladen der Seite.', 'sbb-text-xs app-muted app-mt-4'));
+  if (!storageAvailable()) foot.append(txt('Lokales Speichern ist nicht verfügbar. Die Liste gilt nur bis zum Schliessen oder Neuladen der Seite.', 'sbb-text-xs app-muted app-mt-4'));
+  // Scrollposition der Liste über Neuzeichnen hinweg halten; neuen bzw. bearbeiteten Fall sichtbar machen.
+  body.scrollTop = keepScroll;
+  const mark = body.querySelector('.is-new, .is-editing');
+  if (mark && body.scrollHeight > body.clientHeight) {
+    const top = mark.offsetTop, bottom = top + mark.offsetHeight;
+    if (top < body.scrollTop || bottom > body.scrollTop + body.clientHeight) body.scrollTop = Math.max(0, top - 8);
+  }
 }
 
 function render(focus = false) {

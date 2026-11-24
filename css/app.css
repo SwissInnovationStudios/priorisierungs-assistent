@@ -210,11 +210,26 @@ a.sbb-header__brand { color: inherit; text-decoration: none; }
    ===================================================================== */
 .app-container { max-width: 76rem; margin: 0 auto; padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem) var(--sbb-spacing-fixed-12x); }
 .app-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: clamp(1rem, 2vw, 1.5rem); align-items: start; }
-.app-sticky { position: sticky; top: calc(var(--app-header-height) + var(--sbb-spacing-fixed-4x)); max-height: calc(100vh - var(--app-header-height) - 2rem); overflow: auto; }
+/* Vergleichsliste: Kopf und Fuss fest, nur die Liste scrollt. Auf dem Desktop ist die Box so hoch wie
+   die Bewertungsbox (contain: size → sie zählt nicht zur Zeilenhöhe, stretch füllt die Zeile);
+   der Inhalt bleibt beim Scrollen der Seite sichtbar (sticky, höchstens Fensterhöhe). */
+.app-compare { display: flex; flex-direction: column; }
+.app-compare__head { flex: none; padding-bottom: var(--sbb-spacing-fixed-2x); }
+.app-compare__body { position: relative; flex: 1 1 auto; min-height: 0; }
+.app-compare__foot { flex: none; }
+.app-compare__foot:empty { display: none; }
+@media (min-width: 56.0625rem) {
+  .app-layout { align-items: stretch; }
+  .app-sticky { contain: size; }
+  .app-sticky .app-compare { position: sticky; top: calc(var(--app-header-height) + var(--sbb-spacing-fixed-6x)); height: 100%; max-height: calc(100vh - var(--app-header-height) - var(--sbb-spacing-fixed-12x)); }
+  .app-compare__head { padding-bottom: var(--sbb-spacing-fixed-3x); border-bottom: var(--sbb-border-width-1x) solid var(--app-color-line); }
+  .app-compare__body { overflow-y: auto; overscroll-behavior: contain; padding-right: var(--sbb-spacing-fixed-1x); }
+  .app-compare__body:focus-visible { outline-offset: 0; }
+  .app-compare__foot { padding-top: var(--sbb-spacing-fixed-2x); border-top: var(--sbb-border-width-1x) solid var(--app-color-line); }
+}
 .app-about { margin-top: clamp(1rem, 2vw, 1.5rem); padding-block: var(--sbb-spacing-fixed-2x); border-top: var(--sbb-border-width-1x) solid var(--app-color-card-border); }
 @media (max-width: 56rem) {
   .app-layout { grid-template-columns: 1fr; }
-  .app-sticky { position: static; max-height: none; overflow: visible; }
 }
 @media (max-width: 36rem) { .app-hide-s { display: none; } }
 
@@ -427,5 +442,7 @@ a.sbb-header__brand { color: inherit; text-decoration: none; }
   .sbb-header, .sbb-footer, .sbb-action-group, .sbb-mini-button, .app-skip { display: none !important; }
   body::before { display: none; }
   .sbb-card { box-shadow: none; border: 1px solid #ccc; background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; break-inside: avoid; }
-  .app-sticky { position: static; max-height: none; }
+  .app-sticky { contain: none; }
+  .app-compare, .app-sticky .app-compare { position: static; height: auto; max-height: none; }
+  .app-compare__body { overflow: visible; }
 }
