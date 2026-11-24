@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open-Source-Lizenzen · Priorisierungs-Assistent</title>
+<meta name="description" content="Open-Source-Komponenten und Lizenzen des Priorisierungs-Assistenten.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="app-skip" href="#inhalt">Zum Inhalt</a>
+
+<!-- Lyne: <sbb-header> -->
+<header class="sbb-header">
+  <div class="sbb-header__inner">
+    <a class="sbb-header__brand" href="./" aria-label="Priorisierungs-Assistent – Startseite">
+      <img class="sbb-header__mark" src="assets/icon.svg" alt="" width="32" height="32">
+      <span class="sbb-header__title">Priorisierungs-Assistent<span class="sbb-header__sub">Rechtliches</span></span>
+    </a>
+    <div class="sbb-header__actions">
+      <a class="sbb-secondary-button" href="./" aria-label="Zum Assistenten">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        <span class="app-hide-s">Zum Assistenten</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="app-container" id="inhalt" tabindex="-1">
+  <div class="app-legal">
+    <div class="app-legal__head">
+      <p class="app-overline">Rechtliches</p>
+      <h1 class="sbb-title sbb-title--1">Open-Source-Lizenzen</h1>
+      
+    </div>
+    <div class="sbb-card app-legal__card">
+      <p>Der Priorisierungs-Assistent kommt ohne Frameworks und ohne Build-Schritt aus. Die folgenden fremden Komponenten sind in der Website enthalten; die vollständigen Lizenztexte lassen sich aufklappen und liegen der Website bei.</p>
+
+      <article class="app-license">
+        <div class="app-license__head">
+          <h2 class="app-license__name">Inter</h2>
+          <span class="app-license__tag">SIL Open Font License 1.1</span>
+        </div>
+        <p class="app-license__summary">Die Schrift der gesamten Oberfläche, selbst gehostet in den Schnitten 400, 600 und 700. © The Inter Project Authors · <a href="https://rsms.me/inter/" target="_blank" rel="noopener">rsms.me/inter</a></p>
+        <details>
+          <summary>Lizenztext anzeigen</summary>
+          <pre class="app-license__text" tabindex="0" data-license="fonts/LICENSE-Inter.txt"><a href="fonts/LICENSE-Inter.txt">LICENSE-Inter.txt öffnen</a></pre>
+        </details>
+      </article>
+
+      <article class="app-license">
+        <div class="app-license__head">
+          <h2 class="app-license__name">Lyne Design System (Token-Werte)</h2>
+          <span class="app-license__tag">MIT License</span>
+        </div>
+        <p class="app-license__summary">Namen und Werte der Design-Tokens (Farben, Abstände, Radien, Typografie) sowie der Aufbau einiger Komponenten sind an Lyne angelehnt, damit die Seite später direkt auf Lyne umgestellt werden kann. Es werden keine Marken-Assets verwendet (keine Schrift, kein Logo, keine Icons). © SBB AG · <a href="https://github.com/sbb-design-systems/lyne-components" target="_blank" rel="noopener">github.com/sbb-design-systems/lyne-components</a></p>
+        <details>
+          <summary>Lizenztext anzeigen</summary>
+          <pre class="app-license__text" tabindex="0" data-license="assets/licenses/lyne-components-MIT.txt"><a href="assets/licenses/lyne-components-MIT.txt">lyne-components-MIT.txt öffnen</a></pre>
+        </details>
+      </article>
+
+      <article class="app-license">
+        <div class="app-license__head">
+          <h2 class="app-license__name">Icons, Grafiken und Code</h2>
+          <span class="app-license__tag">Eigene Werke</span>
+        </div>
+        <p class="app-license__summary">Prioritäts-Icons, App-Icon und alle übrigen Symbole sind eigene Zeichnungen; Programmcode und Regelwerk sind eigene Arbeit. Der QR-Code wurde vorab mit dem Python-Werkzeug segno (BSD-3-Clause) erzeugt; das Werkzeug selbst ist nicht Teil der Website.</p>
+      </article>
+      <p class="app-legal__stamp">Swiss Innovation Studios · 2026</p>
+    </div>
+  </div>
+</main>
+
+<!-- Lyne: <sbb-footer variant="clock-columns"> · identisch in index.html, impressum.html, datenschutz.html, lizenzen.html (Test prüft das) -->
+<footer class="sbb-footer">
+  <div class="sbb-footer__inner">
+    <div class="sbb-footer__grid">
+      <div>
+        <a class="sbb-footer__brand" href="./" aria-label="Priorisierungs-Assistent – Startseite">
+          <img src="assets/icon.svg" alt="" width="34" height="34">
+          <span><span class="sbb-footer__name">Priorisierungs-Assistent</span><span class="sbb-footer__sub">Workshop-Prototyp</span></span>
+        </a>
+        <p class="sbb-footer__about">Schritt für Schritt zu einer nachvollziehbaren Jira-Priorität und Bearbeitungsempfehlung. Keine Jira-Anbindung – gespeicherte Fälle bleiben in deinem Browser.</p>
+      </div>
+      <nav class="sbb-link-list" aria-labelledby="footer-site">
+        <h2 class="sbb-link-list__title" id="footer-site">Seite</h2>
+        <a href="./#wizard">Vorgang bewerten</a>
+        <a href="./#comparison">Vergleichsliste</a>
+        <a href="./#logik">Bewertungslogik</a>
+        <a href="./#handy">Aufs Handy</a>
+      </nav>
+      <nav class="sbb-link-list" aria-labelledby="footer-legal">
+        <h2 class="sbb-link-list__title" id="footer-legal">Rechtliches</h2>
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="lizenzen.html">Open-Source-Lizenzen</a>
+      </nav>
+      <div class="sbb-link-list">
+        <h2 class="sbb-link-list__title">Kontakt</h2>
+        <a href="mailto:swissinnovationstudios@gmail.com">swissinnovationstudios@gmail.com</a>
+        <p>Swiss Innovation Studios<br>3013 Bern, Schweiz</p>
+      </div>
+    </div>
+    <div class="sbb-footer__bottom">
+      <span>© 2026 Swiss Innovation Studios</span>
+      <span>Made with Vanilla JS · Hosted on GitHub Pages</span>
+    </div>
+  </div>
+</footer>
+<script src="js/legal.js" defer></script>
+</body>
+</html>

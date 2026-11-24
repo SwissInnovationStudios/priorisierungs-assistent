@@ -48,7 +48,7 @@
   </div>
 
   <!-- Lyne: <sbb-accordion><sbb-expansion-panel> -->
-  <details class="sbb-card sbb-expansion-panel app-about">
+  <details class="sbb-card sbb-expansion-panel app-about" id="logik">
     <summary class="sbb-expansion-panel__header">Wie funktioniert die Bewertungslogik?</summary>
     <div class="sbb-expansion-panel__content app-stack">
       <p><strong>Jira-Priorität:</strong> Jede Antwort kann eine Regel auslösen. Die höchste zutreffende Regel bestimmt die Stufe; weitere Gründe heben sie nicht zusätzlich an. Geprüft werden Betriebs- und Sicherheitslage, Auswirkungen, Fristfolgen, Abhängigkeiten und Nutzen. Aufwand ändert die Stufe nicht.</p>
@@ -60,12 +60,44 @@
     </div>
   </details>
 
-  <!-- Lyne: <sbb-footer> -->
-  <footer class="sbb-footer">
-    <p><span data-ruleset></span> · Keine Jira-Anbindung · Vergleichsfälle werden nur lokal in diesem Browser gespeichert.</p>
-    <p><a data-public-url href="#"></a></p>
-  </footer>
 </main>
+
+<!-- Lyne: <sbb-footer variant="clock-columns"> · identisch in index.html, impressum.html, datenschutz.html, lizenzen.html (Test prüft das) -->
+<footer class="sbb-footer">
+  <div class="sbb-footer__inner">
+    <div class="sbb-footer__grid">
+      <div>
+        <a class="sbb-footer__brand" href="./" aria-label="Priorisierungs-Assistent – Startseite">
+          <img src="assets/icon.svg" alt="" width="34" height="34">
+          <span><span class="sbb-footer__name">Priorisierungs-Assistent</span><span class="sbb-footer__sub">Workshop-Prototyp</span></span>
+        </a>
+        <p class="sbb-footer__about">Schritt für Schritt zu einer nachvollziehbaren Jira-Priorität und Bearbeitungsempfehlung. Keine Jira-Anbindung – gespeicherte Fälle bleiben in deinem Browser.</p>
+      </div>
+      <nav class="sbb-link-list" aria-labelledby="footer-site">
+        <h2 class="sbb-link-list__title" id="footer-site">Seite</h2>
+        <a href="./#wizard">Vorgang bewerten</a>
+        <a href="./#comparison">Vergleichsliste</a>
+        <a href="./#logik">Bewertungslogik</a>
+        <a href="./#handy">Aufs Handy</a>
+      </nav>
+      <nav class="sbb-link-list" aria-labelledby="footer-legal">
+        <h2 class="sbb-link-list__title" id="footer-legal">Rechtliches</h2>
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="lizenzen.html">Open-Source-Lizenzen</a>
+      </nav>
+      <div class="sbb-link-list">
+        <h2 class="sbb-link-list__title">Kontakt</h2>
+        <a href="mailto:swissinnovationstudios@gmail.com">swissinnovationstudios@gmail.com</a>
+        <p>Swiss Innovation Studios<br>3013 Bern, Schweiz</p>
+      </div>
+    </div>
+    <div class="sbb-footer__bottom">
+      <span>© 2026 Swiss Innovation Studios</span>
+      <span>Made with Vanilla JS · Hosted on GitHub Pages</span>
+    </div>
+  </div>
+</footer>
 
 <!-- Lyne: <sbb-dialog> -->
 <dialog id="qr-dialog" class="sbb-dialog" aria-labelledby="qr-title">

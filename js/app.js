@@ -465,9 +465,18 @@ const qrDialog = document.getElementById('qr-dialog');
 document.getElementById('qr-open')?.addEventListener('click', () => qrDialog.showModal());
 document.getElementById('qr-close')?.addEventListener('click', () => qrDialog.close());
 qrDialog?.addEventListener('click', e => { if (e.target === qrDialog) qrDialog.close(); });
+qrDialog?.addEventListener('close', () => { if (location.hash === '#handy') history.replaceState(null, '', location.pathname + location.search); });
+
+// Footer-Sprungziele (auch von den rechtlichen Seiten aus): #logik klappt die Erklärung auf, #handy öffnet den QR-Dialog.
+function followHash() {
+  if (location.hash === '#handy' && qrDialog && !qrDialog.open) qrDialog.showModal();
+  if (location.hash === '#logik') { const d = document.getElementById('logik'); d.open = true; d.scrollIntoView({ block: 'start' }); }
+}
+window.addEventListener('hashchange', followHash);
 document.querySelectorAll('[data-public-url]').forEach(n => { n.textContent = PUBLIC_URL.replace('https://', '').replace('.io/', '.io/\u200B'); n.setAttribute('href', PUBLIC_URL); });
 
 // Offline-Fähigkeit nur auf der veröffentlichten Seite (network-first, siehe sw.js).
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 
 render();
+followHash();
