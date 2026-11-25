@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modelle · Priorisierungs-Assistent</title>
 <meta name="description" content="Die Modelle hinter dem Priorisierungs-Assistenten – Kanban Classes of Service, Cost of Delay und WSJF, Auswirkung × Dringlichkeit, Jira-Prioritäten, Definition of Ready, Confidence und Exposition – und wie sie in die Berechnung eingehen.">
+<!-- OG -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Swiss Innovation Studios">
+<meta property="og:locale" content="de_CH">
+<meta property="og:title" content="Modelle · Priorisierungs-Assistent">
+<meta property="og:description" content="Die Modelle hinter dem Priorisierungs-Assistenten – Kanban Classes of Service, Cost of Delay und WSJF, Auswirkung × Dringlichkeit, Jira-Prioritäten, Definition of Ready, Confidence und Exposition – und wie sie in die Berechnung eingehen.">
+<meta property="og:url" content="https://swissinnovationstudios.github.io/priorisierungs-assistent/modelle.html">
+<meta property="og:image" content="https://swissinnovationstudios.github.io/priorisierungs-assistent/assets/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Priorisierungs-Assistent – Schritt für Schritt zur nachvollziehbaren Jira-Priorität">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /OG -->
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <meta name="color-scheme" content="light">
@@ -77,7 +91,7 @@
       <div class="app-model__grid">
         <div>
           <h3 class="app-info__h3">Kurz erklärt</h3>
-          <p>Jira führte lange fünf Standard-Prioritäten: Blocker, Critical, Major, Minor und Trivial. Neuere Versionen heissen standardmässig Highest bis Lowest; Teams können die Stufen frei benennen. Jira selbst legt nicht fest, was eine Stufe bedeutet – das muss jedes Team für sich definieren.</p>
+          <p>Jira führte lange fünf Standard-Prioritäten: Blocker, Critical, Major, Minor und Trivial. Neuere Versionen heissen standardmässig Highest bis Lowest; Administratoren können Stufen umbenennen und ergänzen. Jira selbst legt nicht fest, was eine Stufe bedeutet – das muss jede Organisation für sich definieren. Genau diese Lücke füllen die Regeln des Assistenten.</p>
         </div>
         <div>
           <h3 class="app-info__h3">So nutzt der Assistent es</h3>
@@ -98,7 +112,7 @@
       <div class="app-model__grid">
         <div>
           <h3 class="app-info__h3">Kurz erklärt</h3>
-          <p>Im IT-Service-Management nach ITIL ergibt sich die Priorität eines Vorfalls aus zwei Grössen: der <strong>Auswirkung</strong> (wie gross ist der Schaden, wie viele sind betroffen?) und der <strong>Dringlichkeit</strong> (wie schnell muss eine Lösung her?). Eine Matrix ordnet jeder Kombination eine Priorität zu – hohe Auswirkung und hohe Dringlichkeit ergeben die höchste.</p>
+          <p>Im IT-Service-Management nach ITIL ergibt sich die Priorität eines Vorfalls aus zwei Grössen: der <strong>Auswirkung</strong> (wie gross ist der Schaden, wie viele sind betroffen?) und der <strong>Dringlichkeit</strong> (wie schnell muss eine Lösung her?). Eine Matrix ordnet jeder Kombination eine Priorität zu – hohe Auswirkung und hohe Dringlichkeit ergeben die höchste. ITIL nutzt sie vor allem für Störungen; der Assistent überträgt die Idee auf alle Vorgänge, also auch auf Anfragen und geplante Arbeit.</p>
         </div>
         <div>
           <h3 class="app-info__h3">So nutzt der Assistent es</h3>
@@ -120,12 +134,12 @@
       <div class="app-model__grid">
         <div>
           <h3 class="app-info__h3">Kurz erklärt</h3>
-          <p>Das Common Vulnerability Scoring System (CVSS) des Forums FIRST beschreibt, wie schwer eine Schwachstelle technisch wiegt. Es bewertet unter anderem, ob ein Angriff übers Netz möglich ist, und in eigenen Gruppen, ob bereits Exploits im Umlauf sind und wie die konkrete Umgebung aussieht. Ein hoher technischer Wert allein sagt deshalb noch nicht, wie dringend es im eigenen Betrieb ist.</p>
+          <p>Das Common Vulnerability Scoring System (CVSS), gepflegt von FIRST (Forum of Incident Response and Security Teams), beschreibt, wie schwer eine Schwachstelle technisch wiegt. Es bewertet unter anderem, ob ein Angriff übers Netz möglich ist, und in eigenen Gruppen, ob bereits Exploits im Umlauf sind und wie die konkrete Umgebung aussieht. Ein hoher technischer Wert allein sagt deshalb noch nicht, wie dringend es im eigenen Betrieb ist.</p>
         </div>
         <div>
           <h3 class="app-info__h3">So nutzt der Assistent es</h3>
           <ul class="app-info__list">
-            <li>Eine einzige Folgefrage bündelt die Idee: <em>Von aussen erreichbar oder Ausnutzung beobachtet?</em> – oder <em>nur intern erreichbar bzw. wirksam geschützt?</em></li>
+            <li>Eine einzige Folgefrage bündelt die Idee: <em>Von aussen erreichbar oder Ausnutzung beobachtet?</em> – oder <em>nur intern erreichbar bzw. wirksam geschützt?</em> Das entspricht grob den CVSS-Angaben «Attack Vector: Network» und «Exploit Maturity: Attacked».</li>
             <li>Gefragt wird nur bei einem Sicherheitsthema, das «relevant» oder «bestätigt, planbar» ist – dort, wo die Antwort etwas ändert.</li>
             <li>Exponiert hebt an: relevantes Thema → <strong>Major</strong>, bestätigtes Risiko → <strong>Critical</strong> mit Hinweis an die Security-Fachstelle.</li>
           </ul>
@@ -149,7 +163,7 @@
           <div data-render="cos-table"></div>
         </div>
       </div>
-      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kanban steuert Classes of Service über eigene Bahnen, WIP-Limits und Startzeitpunkte. Der Assistent gibt nur die Klasse und eine Handlungsempfehlung aus; wie das Board damit umgeht, entscheidet das Team.</p>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kanban steuert Classes of Service über eigene Bahnen, WIP-Limits und Startzeitpunkte. Der Assistent gibt nur die Klasse und eine Handlungsempfehlung aus; wie das Board damit umgeht, entscheidet das Team. In Kanban geht Expedite vor allem anderen. Im Assistenten bringt Expedite nur +35 und überholt so keine höhere Stufe – weil Expedite-Fälle ohnehin über den zuständigen Prozess laufen, nicht über die Vergleichsliste.</p>
       <p class="app-model__score"><span>Wirkung</span> Expedite +35 · Fixed Date: Fristzuschlag +24 / +16 / +8 · Bearbeitungsempfehlung</p>
       <p class="app-model__sources">Mehr dazu: <a href="https://kanban.university/glossary/" target="_blank" rel="noopener">Kanban University: Glossar</a> · <a href="https://kanbantool.com/kanban-guide/classes-of-service" target="_blank" rel="noopener">Kanban Tool: Classes of Service</a></p>
     </section>
@@ -168,7 +182,7 @@
           <div data-render="cod-table"></div>
         </div>
       </div>
-      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kein Teilen durch den Aufwand und keine Geldbeträge. Die Zuschläge sind gedeckelt (zusammen höchstens <span data-render="bonus-max">75</span> Punkte), damit sie nur <em>innerhalb</em> einer Stufe ordnen. Ein dringlicher Major-Fall überholt so nie einen Critical-Fall.</p>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kein Teilen durch den Aufwand und keine Geldbeträge. Bei WSJF verdoppelt halber Aufwand die Priorität; hier ist kleiner Aufwand nur ein Gleichstandsbrecher (+1). Ob das reicht, ist eine offene Workshop-Frage. Die Zuschläge sind gedeckelt (zusammen höchstens <span data-render="bonus-max">75</span> Punkte), damit sie nur <em>innerhalb</em> einer Stufe ordnen. Ein dringlicher Major-Fall überholt so nie einen Critical-Fall.</p>
       <p class="app-model__score"><span>Wirkung</span> Frist +24 / +16 / +8 · Abhängigkeit +10 / +5 · kleiner Aufwand +1</p>
       <p class="app-model__sources">Mehr dazu: <a href="https://blackswanfarming.com/cost-of-delay" target="_blank" rel="noopener">Black Swan Farming: Cost of Delay</a> · <a href="https://framework.scaledagile.com/wsjf/" target="_blank" rel="noopener">SAFe: Weighted Shortest Job First</a></p>
     </section>
@@ -179,7 +193,7 @@
       <div class="app-model__grid">
         <div>
           <h3 class="app-info__h3">Kurz erklärt</h3>
-          <p>Eine Definition of Ready hält fest, was erfüllt sein muss, bevor ein Team eine Arbeit beginnt – zum Beispiel geklärte Anforderungen, gelöste Abhängigkeiten oder verfügbare Fachleute. Jedes Team legt seine eigenen Kriterien fest. Zu streng gehandhabt kann sie zur Hürde werden, die Arbeit unnötig aufhält.</p>
+          <p>Eine Definition of Ready hält fest, was erfüllt sein muss, bevor ein Team eine Arbeit beginnt – zum Beispiel geklärte Anforderungen, gelöste Abhängigkeiten oder verfügbare Fachleute. Jedes Team legt seine eigenen Kriterien fest. Sie ist kein Bestandteil des Scrum Guides, sondern eine verbreitete Teampraxis. Zu streng gehandhabt kann sie zur Hürde werden, die Arbeit unnötig aufhält.</p>
         </div>
         <div>
           <h3 class="app-info__h3">So nutzt der Assistent es</h3>
@@ -212,7 +226,7 @@
           </ul>
         </div>
       </div>
-      <p class="app-model__diff"><strong>Bewusst anders:</strong> RICE multipliziert mit der Confidence und verkleinert so den Wert. Der Assistent senkt nie eine Stufe wegen Unsicherheit – gerade in einer akuten Lage wäre das gefährlich. Er markiert sie als vorläufig und verlangt die Klärung.</p>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> RICE multipliziert mit der Confidence und verkleinert so den Wert. Der Assistent rechnet die Belastbarkeit nicht in die Stufe ein, sondern markiert die Stufe als vorläufig und reiht den Fall nicht ein. Zu beachten: Eine «Unklar»-Antwort löst ihre Regel nicht aus – eine vorläufige Stufe kann deshalb tiefer liegen als die tatsächliche Lage und ist als Untergrenze zu lesen.</p>
       <p class="app-model__score"><span>Wirkung</span> Hoch / Mittel / Niedrig · Niedrig → vorläufig, kein Vergleichswert</p>
       <p class="app-model__sources">Mehr dazu: <a href="https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/" target="_blank" rel="noopener">Intercom: RICE – simple prioritization</a></p>
     </section>

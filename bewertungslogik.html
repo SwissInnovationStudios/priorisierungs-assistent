@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bewertungslogik · Priorisierungs-Assistent</title>
 <meta name="description" content="So rechnet der Priorisierungs-Assistent: Fragen, Regeln für die Jira-Priorität, Belastbarkeit, Bearbeitungsart und Reihenfolge – mit durchgerechneten Beispielen.">
+<!-- OG -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Swiss Innovation Studios">
+<meta property="og:locale" content="de_CH">
+<meta property="og:title" content="Bewertungslogik · Priorisierungs-Assistent">
+<meta property="og:description" content="So rechnet der Priorisierungs-Assistent: Fragen, Regeln für die Jira-Priorität, Belastbarkeit, Bearbeitungsart und Reihenfolge – mit durchgerechneten Beispielen.">
+<meta property="og:url" content="https://swissinnovationstudios.github.io/priorisierungs-assistent/bewertungslogik.html">
+<meta property="og:image" content="https://swissinnovationstudios.github.io/priorisierungs-assistent/assets/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Priorisierungs-Assistent – Schritt für Schritt zur nachvollziehbaren Jira-Priorität">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /OG -->
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <meta name="color-scheme" content="light">
@@ -109,10 +123,10 @@
       <ul class="app-principles">
         <li><strong>Die höchste Regel gewinnt.</strong> Gründe werden nicht addiert. Begrenzte Auswirkungen (Minor) und eine Frist mit erheblichen Folgen (Major) ergeben Major – nicht «mehr als Major».</li>
         <li><strong>Folgen vor Datum.</strong> Ein nahes Datum allein macht nichts dringend. Entscheidend ist, was passiert, wenn die Frist verpasst wird.</li>
-        <li><strong>Blockiert ist nicht Blocker.</strong> Wartende Teams ziehen nach vorne. Über Major hebt eine Blockade nur, wenn auch die Folgen erheblich sind.</li>
+        <li><strong>Blockiert ist nicht Blocker.</strong> Wartende Teams ziehen nach vorne, eine Abhängigkeit allein ergibt aber höchstens Major. Critical wird es nur, wenn ein kritischer Arbeitspfad blockiert ist <em>und</em> die Folgen erheblich sind.</li>
         <li><strong>Schweregrad ist nicht Priorität.</strong> Bei Sicherheitsthemen zählen bestätigtes Risiko, Handlungsdruck und Exposition – nicht der technische Schweregrad allein.</li>
         <li><strong>Aufwand ordnet, priorisiert aber nicht.</strong> Kleiner Aufwand bringt einen Punkt in der Reihenfolge, nie eine höhere Stufe.</li>
-        <li><strong>«Unklar» ist erlaubt.</strong> Statt zu raten, markiert der Assistent die Einstufung als vorläufig und fordert die Klärung ein.</li>
+        <li><strong>«Unklar» ist erlaubt.</strong> Statt zu raten, markiert der Assistent die Einstufung als vorläufig und fordert die Klärung ein. Eine vorläufige Stufe ist eine Untergrenze: Die Lage kann ernster sein.</li>
       </ul>
     </section>
 
@@ -149,7 +163,8 @@
       <h2 class="app-info__h2" id="h-belastbarkeit"><span class="app-info__num">5</span>Belastbarkeit</h2>
       <p>Die Belastbarkeit sagt, wie sicher die Einstufung ist. Sie hängt von deiner Selbsteinschätzung und von «Unklar»-Antworten ab. Als <strong>Kernfragen</strong> gelten alle Fragen ausser Aufwand, Startklarheit und Belastbarkeit – also alles, was die Stufe bestimmen kann.</p>
       <div data-render="confidence"></div>
-      <p>Ist die Belastbarkeit «Niedrig», steht neben der Stufe «vorläufig», und die Skala ist schraffiert. Bei möglichen erheblichen Folgen gilt trotzdem: nicht auf die Klärung warten, sondern den zuständigen Prozess nutzen.</p>
+      <p>Ist die Belastbarkeit «Niedrig», steht neben der Stufe «vorläufig», und die Skala ist schraffiert.</p>
+      <p><strong>Wichtig:</strong> Eine «Unklar»-Antwort löst die zugehörige Regel nicht aus. Ist zum Beispiel bei einem kritischen Ausfall die Auswirkung noch unklar, ergibt das vorläufig Critical statt Blocker. Eine vorläufige Stufe ist deshalb eine <em>Untergrenze</em>. Bei möglichen erheblichen Folgen gilt: nicht auf die Klärung warten, sondern den zuständigen Prozess nutzen.</p>
       <div class="app-model-note" role="note">
         <span class="app-model-note__label">Modell</span>
         <p><a href="modelle.html#belastbarkeit">Confidence</a>, wie im RICE-Modell: Wie gut sind die Angaben gestützt? Anders als bei RICE wird die Zahl nicht verkleinert – ein unsicherer Fall wird gar nicht erst eingereiht.</p>
