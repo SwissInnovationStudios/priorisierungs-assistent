@@ -3,6 +3,7 @@
 import { questions, activeQuestions, evaluate, liveAlerts, orderCases, Priority, RULESET_VERSION } from './engine.js';
 import { reasonPriority, bonusList, serviceInfo, raiseHints } from './explain.js';
 import { loadCases, saveCases, storageAvailable, newId } from './storage.js';
+import { el, prioIcon, chip } from './ui.js';
 
 const PUBLIC_URL = 'https://swissinnovationstudios.github.io/priorisierungs-assistent/';
 
@@ -19,19 +20,7 @@ let editingId = null;        // Fall, der gerade bearbeitet wird
 let positionBefore = null;   // Platz des bearbeiteten Falls vor der Änderung
 let meterFrom;               // Stufe vor dem letzten «Weiter» (nur dann animiert der Meter)
 
-// ---------- DOM-Helfer ----------
-function el(tag, props = {}, content = '') {
-  const out = document.createElement(tag);
-  for (const [key, value] of Object.entries(props)) {
-    if (value === undefined || value === null || value === false) continue;
-    if (key === 'class') out.className = value;
-    else if (key === 'click') out.addEventListener('click', value);
-    else out.setAttribute(key, value === true ? '' : value);
-  }
-  if (typeof content === 'string') { if (content) out.textContent = content; }
-  else out.append(...content.filter(Boolean));
-  return out;
-}
+// ---------- DOM-Helfer (el, prioIcon, chip: js/ui.js) ----------
 const txt = (s, cls = '', extra = {}) => el('p', { class: cls || undefined, ...extra }, s);
 const button = (label, onClick, variant = 'sbb-button', extra = {}) => el('button', { type: 'button', class: variant, click: onClick, ...extra }, label);
 const heading = (s, level = 1, extra = {}) => el(level === 1 ? 'h1' : 'h2', { class: `sbb-title sbb-title--${level}`, tabindex: '-1', 'data-focus': '', ...extra }, s);
@@ -44,7 +33,8 @@ const ICONS = {
   close: '<path d="M6 6l12 12M18 6 6 18"/>',
   edit: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/>',
   qr: '<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 19h1.5M19.5 14v2"/>',
-  plus: '<path d="M12 5v14M5 12h14"/>'
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  book: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/>'
 };
 function icon(name, cls = 'app-icon') {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -67,25 +57,6 @@ function notification(type, items, title, extra = {}) {
     el('div', { class: 'sbb-notification__content' }, [title ? el('strong', { class: 'sbb-notification__title' }, title) : null, ...items.map(s => txt(s))])
   ]);
 }
-// Prioritäts-Icons: eigene Zeichnung in der Bildsprache von Jira (Sperre, Pfeile hoch/runter), keine Atlassian-Assets.
-// Farbe über currentColor, damit sie auf jedem Chip-Hintergrund lesbar bleibt. Ohne Text → ändert textContent nicht.
-const PRIO_ICONS = {
-  Blocker: '<circle cx="8" cy="8" r="6.25"/><path d="M4.75 8h6.5"/>',
-  Critical: '<path d="M4 8.25 8 4.5l4 3.75M4 12 8 8.25 12 12"/>',
-  Major: '<path d="M4 10.25 8 6.25l4 4"/>',
-  Minor: '<path d="M4 5.75 8 9.75l4-4"/>',
-  Trivial: '<path d="M4 4 8 7.75 12 4M4 7.75 8 11.5l4-3.75"/>'
-};
-function prioIcon(priority) {
-  if (!PRIO_ICONS[priority]) return null;
-  const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  for (const [k, v] of Object.entries({ viewBox: '0 0 16 16', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', class: 'app-prio-icon' })) s.setAttribute(k, v);
-  s.innerHTML = PRIO_ICONS[priority];
-  return s;
-}
-
-// Lyne: <sbb-chip-label> – Prioritätsfarben sind app-spezifisch
-const chip = (priority, extra = {}) => el('span', { class: 'sbb-chip-label app-prio app-prio--' + (priority ? priority.toLowerCase() : 'none'), ...extra }, [prioIcon(priority), priority || 'Ohne Einstufung']);
 const optionLabel = (qid, value) => (questions.find(q => q.id === qid)?.options.find(o => o[0] === value) || [])[1] || value;
 
 // ---------- Navigation (wie Referenz) ----------
@@ -187,7 +158,7 @@ function meter(level, from) {
 function startView() {
   const input = el('input', { id: 'case-title', class: 'sbb-input', type: 'text', maxlength: '120', autocomplete: 'off', placeholder: 'z. B. Zertifikat erneuern oder Backup prüfen' });
   input.value = name;
-  input.addEventListener('input', () => { name = input.value; });
+  input.addEventListener('input', () => { name = input.value; saveDraft(); });
   const field = el('div', { class: 'sbb-form-field' }, [el('label', { for: 'case-title', class: 'sbb-form-field__label' }, 'Ticket oder Aufgabenbezeichnung (optional)'), input]);
   const form = el('form', { novalidate: true }, [field, el('button', { type: 'submit', class: 'sbb-button app-block', 'data-key': 'next' }, 'Bewertung starten'), keyHint([['→', 'oder Enter: Bewertung starten']])]);
   form.addEventListener('submit', e => { e.preventDefault(); begin(); });
@@ -203,7 +174,7 @@ function startView() {
       step(2, 'Jira-Priorität', 'Blocker bis Trivial – mit dem Kriterium, das die Stufe bestimmt.'),
       step(3, 'Bearbeitung', 'Behandlungsart und Position im Vergleich mit anderen Fällen.')
     ]),
-    txt('Bei einem akuten Betriebs- oder Sicherheitsfall gilt der zuständige Prozess. Der Assistent ersetzt ihn nicht.', 'sbb-text-xs app-muted app-mt-4 app-mb-0')
+    el('p', { class: 'sbb-text-xs app-muted app-mt-4 app-mb-0' }, ['Bei einem akuten Betriebs- oder Sicherheitsfall gilt der zuständige Prozess. Der Assistent ersetzt ihn nicht. ', el('a', { href: 'bewertungslogik.html' }, 'So wird bewertet')])
   );
 }
 
@@ -341,7 +312,7 @@ function resultView() {
     el('div', { class: 'app-result__head' }, [el('span', { class: 'app-result__num', 'aria-hidden': 'true' }, '2'), el('h2', { id: 'r2', class: 'sbb-title sbb-title--3' }, 'Bearbeitungsempfehlung')]),
     txt(result.treatment, 'app-treatment', { 'data-test': 'treatment' }),
     el('div', { class: 'app-tiles' }, [
-      el('div', { class: 'app-tile' }, [el('span', { class: 'app-label' }, 'Bearbeitungsart'), el('strong', { class: 'app-tile__value', 'data-test': 'service' }, result.service), txt(serviceInfo[result.service] || '', 'sbb-text-xs app-muted app-mb-0')]),
+      el('div', { class: 'app-tile' }, [el('span', { class: 'app-label' }, 'Bearbeitungsart'), el('strong', { class: 'app-tile__value', 'data-test': 'service' }, result.service), txt(serviceInfo[result.service] || '', 'sbb-text-xs app-muted app-mb-0'), el('a', { class: 'sbb-text-xs', href: 'modelle.html#classes-of-service' }, 'Was bedeutet ' + result.service + '?')]),
       el('div', { class: 'app-tile' + (position ? '' : ' app-tile--pending') }, [el('span', { class: 'app-label' }, 'Vergleichsreihenfolge'), el('strong', { class: 'app-tile__value', 'data-test': 'position' }, compareValue), txt(compareHint, 'sbb-text-xs app-muted app-mb-0', { 'data-test': position ? undefined : 'gates' })])
     ]),
     position
@@ -353,6 +324,12 @@ function resultView() {
           bonuses.length ? txt('Zuschläge ordnen nur innerhalb derselben Stufe – sie heben nie über die nächste Stufe.', 'sbb-text-xs app-muted app-mb-0 app-mt-1') : null
         ])
       : null
+  ]));
+
+  // Verweis auf die ausführliche Erklärung (eigene Seite; der Entwurf bleibt über sessionStorage erhalten).
+  wiz.append(el('div', { class: 'app-explain-link' }, [
+    txt('Wie kommt diese Empfehlung zustande? Alle Regeln, Punkte und Modelle – mit Beispielen.'),
+    el('a', { class: 'sbb-secondary-button', href: 'bewertungslogik.html', 'data-test': 'logic-link' }, [icon('book'), 'Bewertungslogik ansehen'])
   ]));
 
   // Nachvollziehbarkeit: alle Antworten (reine Anzeige).
@@ -475,11 +452,37 @@ function render(focus = false) {
   comparisonView();
   if (focus) wiz.querySelector('[data-focus]')?.focus({ preventScroll: true });
   if (focus && wiz.getBoundingClientRect().top < 0) wiz.scrollIntoView({ block: 'start' });
+  saveDraft();
+}
+
+// ---------- Entwurf ----------
+// Die laufende Bewertung wird pro Tab in sessionStorage gehalten. So geht nichts verloren, wenn man zwischendurch
+// die Bewertungslogik oder eine andere Unterseite öffnet und zurückkommt. «Neuer Fall» verwirft den Entwurf.
+const DRAFT_KEY = 'priorisierungs-assistent-entwurf';
+function saveDraft() {
+  try {
+    if (view === 'start' && !name && !Object.keys(a).length) sessionStorage.removeItem(DRAFT_KEY);
+    else sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ a, name, view, current, saved, savedId: savedCase?.id ?? null, editingId, positionBefore }));
+  } catch { /* privater Modus o. Ä.: ohne Entwurf weiter */ }
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null');
+    if (!d || !['start', 'question', 'result'].includes(d.view)) return;
+    a = d.a && typeof d.a === 'object' ? d.a : {};
+    name = typeof d.name === 'string' ? d.name : '';
+    view = d.view; current = d.current;
+    editingId = d.editingId && cases.some(c => c.id === d.editingId) ? d.editingId : null;
+    positionBefore = d.positionBefore ?? null;
+    savedCase = d.saved ? cases.find(c => c.id === d.savedId) || null : null;
+    saved = !!savedCase;
+    if (view === 'question' && !activeQuestions(a).some(q => q.id === current)) view = 'start';
+  } catch { /* defekter Entwurf: neu beginnen */ }
 }
 
 // ---------- Tastatur: ↑/↓ Antwort wählen, → weiter, ← zurück ----------
 // Ergänzt Maus/Touch/Tab/Enter, ersetzt sie nicht. Ausgenommen: Textfelder (ausser → am Ende des Titels
-// auf der Startseite), offene Dialoge, Vergleichsliste, Erklärung und Footer (dort normales Scrollen).
+// auf der Startseite), offene Dialoge, Vergleichsliste und Footer (dort normales Scrollen).
 function keyHint(items) {
   return el('p', { class: 'app-keys', 'aria-hidden': 'true' }, items.flatMap(([k, label], n) => [n ? el('span', { class: 'app-keys__sep' }, '·') : null, el('kbd', {}, k), ' ' + label]).filter(Boolean));
 }
@@ -513,7 +516,7 @@ document.addEventListener('keydown', e => {
   if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
   if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.isComposing || document.querySelector('dialog[open]')) return;
   const t = e.target instanceof Element ? e.target : null;
-  if (t?.closest('#comparison, #logik, .sbb-footer')) return;
+  if (t?.closest('#comparison, .sbb-footer')) return;
   if (t?.matches('textarea, select, [contenteditable], input:not([type=radio]):not([type=checkbox])')) {
     const atEnd = t.id === 'case-title' && t.selectionStart === t.value.length && t.selectionEnd === t.value.length;
     if (!(e.key === 'ArrowRight' && atEnd)) return;
@@ -528,10 +531,10 @@ document.getElementById('qr-close')?.addEventListener('click', () => qrDialog.cl
 qrDialog?.addEventListener('click', e => { if (e.target === qrDialog) qrDialog.close(); });
 qrDialog?.addEventListener('close', () => { if (location.hash === '#handy') history.replaceState(null, '', location.pathname + location.search); });
 
-// Footer-Sprungziele (auch von den rechtlichen Seiten aus): #logik klappt die Erklärung auf, #handy öffnet den QR-Dialog.
+// Footer-Sprungziel #handy öffnet den QR-Dialog (auch von den Unterseiten aus).
 function followHash() {
   if (location.hash === '#handy' && qrDialog && !qrDialog.open) qrDialog.showModal();
-  if (location.hash === '#logik') { const d = document.getElementById('logik'); d.open = true; d.scrollIntoView({ block: 'start' }); }
+  if (location.hash === '#logik') location.replace('bewertungslogik.html');   // alter Link auf die frühere Erklärung
 }
 window.addEventListener('hashchange', followHash);
 document.querySelectorAll('[data-public-url]').forEach(n => { n.textContent = PUBLIC_URL.replace('https://', '').replace('.io/', '.io/\u200B'); n.setAttribute('href', PUBLIC_URL); });
@@ -539,5 +542,6 @@ document.querySelectorAll('[data-public-url]').forEach(n => { n.textContent = PU
 // Offline-Fähigkeit nur auf der veröffentlichten Seite (network-first, siehe sw.js).
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 
+loadDraft();
 render();
 followHash();

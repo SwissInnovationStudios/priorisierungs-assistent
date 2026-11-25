@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bewertungslogik · Priorisierungs-Assistent</title>
+<meta name="description" content="So rechnet der Priorisierungs-Assistent: Fragen, Regeln für die Jira-Priorität, Belastbarkeit, Bearbeitungsart und Reihenfolge – mit durchgerechneten Beispielen.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="app-skip" href="#inhalt">Zum Inhalt</a>
+
+<!-- Lyne: <sbb-header> -->
+<header class="sbb-header">
+  <div class="sbb-header__inner">
+    <a class="sbb-header__brand" href="./" aria-label="Priorisierungs-Assistent – Startseite">
+      <img class="sbb-header__mark" src="assets/icon.svg" alt="" width="32" height="32">
+      <span class="sbb-header__title">Priorisierungs-Assistent<span class="sbb-header__sub">Bewertungslogik</span></span>
+    </a>
+    <div class="sbb-header__actions">
+      <!-- Header-Link Bewertungslogik -->
+      <a class="sbb-transparent-button app-header-link is-active" aria-current="page" href="bewertungslogik.html" aria-label="Bewertungslogik">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+        <span class="app-hide-s">Bewertungslogik</span>
+      </a>
+      <a class="sbb-secondary-button" href="./" aria-label="Zum Assistenten">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        <span class="app-hide-s">Zum Assistenten</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="app-container" id="inhalt" tabindex="-1">
+  <div class="app-info">
+    <div class="app-legal__head">
+      <p class="app-overline">So rechnet der Assistent</p>
+      <h1 class="sbb-title sbb-title--1">Bewertungslogik</h1>
+      <p class="app-legal__updated"><span data-ruleset>Regelwerk v0.2 · Workshop-Entwurf</span></p>
+    </div>
+    <nav class="app-subnav" aria-label="Erklärungen">
+      <a class="app-subnav__link is-active" href="bewertungslogik.html" aria-current="page">Bewertungslogik</a>
+      <a class="app-subnav__link" href="modelle.html">Modelle</a>
+    </nav>
+    <p class="app-info__lead">Der Assistent stellt dir je nach Fall 9 bis 13 Fragen und leitet daraus eine Empfehlung ab. Jeder Schritt folgt festen, offen gelegten Regeln – diese Seite zeigt sie vollständig. Tabellen und Beispiele werden direkt mit derselben Rechenlogik erzeugt, die auch der Assistent verwendet. Erklärung und Ergebnis können deshalb nicht auseinanderlaufen.</p>
+
+    <nav class="sbb-card app-toc" aria-labelledby="toc-title">
+      <h2 class="app-toc__title" id="toc-title">Inhalt</h2>
+      <ol class="app-toc__list">
+        <li><a href="#ueberblick">Auf einen Blick</a></li>
+        <li><a href="#grundsaetze">Grundsätze</a></li>
+        <li><a href="#fragen">Der Fragenpfad</a></li>
+        <li><a href="#prioritaet">Jira-Priorität</a></li>
+        <li><a href="#belastbarkeit">Belastbarkeit</a></li>
+        <li><a href="#bearbeitungsart">Bearbeitungsart</a></li>
+        <li><a href="#startklar">Startklar oder «Noch zu klären»</a></li>
+        <li><a href="#reihenfolge">Reihenfolge im Vergleich</a></li>
+        <li><a href="#hinweise">Hinweise und Eskalation</a></li>
+        <li><a href="#anzeige">Mindeststufe und «Was würde die Stufe heben?»</a></li>
+        <li><a href="#beispiele">Durchgerechnete Beispiele</a></li>
+        <li><a href="#grenzen">Grenzen und Verantwortung</a></li>
+      </ol>
+    </nav>
+
+    <section class="sbb-card app-info__section" id="ueberblick" aria-labelledby="h-ueberblick">
+      <h2 class="app-info__h2" id="h-ueberblick"><span class="app-info__num">1</span>Auf einen Blick</h2>
+      <p>Aus deinen Antworten berechnet der Assistent vier Ergebnisse – bewusst getrennt, damit sich zum Beispiel Aufwand und Dringlichkeit nicht vermischen. Unabhängig davon erscheinen Eskalationshinweise, sobald ein zuständiger Prozess greift.</p>
+      <ol class="app-flow">
+        <li class="app-flow__step">
+          <span class="app-flow__num">1</span>
+          <strong class="app-flow__title">Jira-Priorität</strong>
+          <span class="app-flow__text">Blocker bis Trivial. Die höchste zutreffende Regel bestimmt die Stufe.</span>
+          <a class="app-flow__model" href="modelle.html#jira-prioritaeten">Jira-Prioritäten</a>
+          <a class="app-flow__model" href="modelle.html#auswirkung-dringlichkeit">Auswirkung × Dringlichkeit</a>
+        </li>
+        <li class="app-flow__step">
+          <span class="app-flow__num">2</span>
+          <strong class="app-flow__title">Belastbarkeit</strong>
+          <span class="app-flow__text">Hoch, Mittel oder Niedrig. Niedrig heisst: Die Stufe ist vorläufig.</span>
+          <a class="app-flow__model" href="modelle.html#belastbarkeit">Confidence</a>
+        </li>
+        <li class="app-flow__step">
+          <span class="app-flow__num">3</span>
+          <strong class="app-flow__title">Bearbeitungsart</strong>
+          <span class="app-flow__text">Expedite, Fixed Date, Intangible oder Standard – wie der Fall behandelt wird.</span>
+          <a class="app-flow__model" href="modelle.html#classes-of-service">Kanban Classes of Service</a>
+        </li>
+        <li class="app-flow__step">
+          <span class="app-flow__num">4</span>
+          <strong class="app-flow__title">Reihenfolge</strong>
+          <span class="app-flow__text">Vergleichswert = 100 × Stufe + Zuschläge. Nur für startklare, belastbare Fälle.</span>
+          <a class="app-flow__model" href="modelle.html#cost-of-delay">Cost of Delay / WSJF</a>
+          <a class="app-flow__model" href="modelle.html#definition-of-ready">Definition of Ready</a>
+        </li>
+      </ol>
+      <p class="app-info__more">Welche Modelle dahinterstehen und wie sie in die Berechnung eingehen, steht ausführlich unter <a href="modelle.html">Modelle</a>.</p>
+    </section>
+
+    <section class="sbb-card app-info__section" id="grundsaetze" aria-labelledby="h-grundsaetze">
+      <h2 class="app-info__h2" id="h-grundsaetze"><span class="app-info__num">2</span>Grundsätze</h2>
+      <p>Sechs Leitsätze prägen das Regelwerk. Sie erklären die meisten Ergebnisse, die auf den ersten Blick überraschen.</p>
+      <ul class="app-principles">
+        <li><strong>Die höchste Regel gewinnt.</strong> Gründe werden nicht addiert. Begrenzte Auswirkungen (Minor) und eine Frist mit erheblichen Folgen (Major) ergeben Major – nicht «mehr als Major».</li>
+        <li><strong>Folgen vor Datum.</strong> Ein nahes Datum allein macht nichts dringend. Entscheidend ist, was passiert, wenn die Frist verpasst wird.</li>
+        <li><strong>Blockiert ist nicht Blocker.</strong> Wartende Teams ziehen nach vorne. Über Major hebt eine Blockade nur, wenn auch die Folgen erheblich sind.</li>
+        <li><strong>Schweregrad ist nicht Priorität.</strong> Bei Sicherheitsthemen zählen bestätigtes Risiko, Handlungsdruck und Exposition – nicht der technische Schweregrad allein.</li>
+        <li><strong>Aufwand ordnet, priorisiert aber nicht.</strong> Kleiner Aufwand bringt einen Punkt in der Reihenfolge, nie eine höhere Stufe.</li>
+        <li><strong>«Unklar» ist erlaubt.</strong> Statt zu raten, markiert der Assistent die Einstufung als vorläufig und fordert die Klärung ein.</li>
+      </ul>
+    </section>
+
+    <section class="sbb-card app-info__section" id="fragen" aria-labelledby="h-fragen">
+      <h2 class="app-info__h2" id="h-fragen"><span class="app-info__num">3</span>Der Fragenpfad</h2>
+      <p>Neun Fragen erscheinen immer. Bis zu vier Folgefragen kommen nur dazu, wenn sie das Ergebnis verändern können – etwa die Fristfolgen, sobald es eine Frist gibt. Jede Frage ausser «Belastbarkeit» lässt sich mit «Unklar / nicht bekannt» beantworten.</p>
+      <div data-render="questions"></div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="prioritaet" aria-labelledby="h-prioritaet">
+      <h2 class="app-info__h2" id="h-prioritaet"><span class="app-info__num">4</span>Jira-Priorität: die höchste zutreffende Regel</h2>
+      <p>Jede Antwort kann eine oder mehrere Regeln auslösen. Jede Regel steht für eine Mindeststufe. Die Jira-Priorität ist die höchste dieser Stufen. Alle ausgelösten Regeln erscheinen in der Auswertung unter «Warum diese Stufe?»; die massgebende ist hervorgehoben.</p>
+      <p>Kurz gesagt bedeuten die Stufen in diesem Regelwerk:</p>
+      <dl class="app-levels">
+        <div><dt data-chip="Blocker"></dt><dd>Akuter oder unmittelbar drohender schwerwiegender Schaden, ohne tragfähige Umgehung.</dd></div>
+        <div><dt data-chip="Critical"></dt><dd>Ausfall, akutes oder exponiertes Sicherheitsrisiko, kurzfristige Frist mit schweren Folgen.</dd></div>
+        <div><dt data-chip="Major"></dt><dd>Wesentliche Auswirkungen oder wesentlicher Nutzen, planbare Risiken, wichtige Abhängigkeiten.</dd></div>
+        <div><dt data-chip="Minor"></dt><dd>Begrenzte Auswirkungen oder begrenzter Nutzen.</dd></div>
+        <div><dt data-chip="Trivial"></dt><dd>Minimale Auswirkungen, sonst nichts.</dd></div>
+      </dl>
+      <h3 class="app-info__h3">Alle Regeln</h3>
+      <p class="sbb-text-s app-muted">Spalte «Begründung»: So erscheint die Regel in der Auswertung. <span class="app-badge">v0.2</span> markiert Regeln, die im Workshop gegenüber dem ersten Prototyp angepasst wurden.</p>
+      <div data-render="level-rules"></div>
+      <h3 class="app-info__h3">Was die Stufe nicht verändert</h3>
+      <p><strong>Aufwand</strong>, <strong>Startklarheit</strong> und <strong>Belastbarkeit</strong> wirken nie auf die Stufe. Sie steuern nur, ob und wo der Fall in der Reihenfolge erscheint.</p>
+      <div class="app-model-note" role="note">
+        <span class="app-model-note__label">Modelle</span>
+        <p><a href="modelle.html#auswirkung-dringlichkeit">Auswirkung × Dringlichkeit</a> (ITIL): Auswirkungen bilden die Grundstufe, Ausfall, fehlende Umgehung und kurze Fristen heben an. <a href="modelle.html#jira-prioritaeten">Jira-Prioritäten</a>: Skala von Trivial (0) bis Blocker (4). <a href="modelle.html#exposition">Exposition</a>: Ist das System von aussen erreichbar, wird ein Sicherheitsthema zu Major, ein bestätigtes Risiko zu Critical.</p>
+        <span class="app-model-note__score">Wirkung: Stufe 0–4 · im Vergleichswert × 100</span>
+      </div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="belastbarkeit" aria-labelledby="h-belastbarkeit">
+      <h2 class="app-info__h2" id="h-belastbarkeit"><span class="app-info__num">5</span>Belastbarkeit</h2>
+      <p>Die Belastbarkeit sagt, wie sicher die Einstufung ist. Sie hängt von deiner Selbsteinschätzung und von «Unklar»-Antworten ab. Als <strong>Kernfragen</strong> gelten alle Fragen ausser Aufwand, Startklarheit und Belastbarkeit – also alles, was die Stufe bestimmen kann.</p>
+      <div data-render="confidence"></div>
+      <p>Ist die Belastbarkeit «Niedrig», steht neben der Stufe «vorläufig», und die Skala ist schraffiert. Bei möglichen erheblichen Folgen gilt trotzdem: nicht auf die Klärung warten, sondern den zuständigen Prozess nutzen.</p>
+      <div class="app-model-note" role="note">
+        <span class="app-model-note__label">Modell</span>
+        <p><a href="modelle.html#belastbarkeit">Confidence</a>, wie im RICE-Modell: Wie gut sind die Angaben gestützt? Anders als bei RICE wird die Zahl nicht verkleinert – ein unsicherer Fall wird gar nicht erst eingereiht.</p>
+        <span class="app-model-note__score">Wirkung: Niedrig → vorläufig, kein Vergleichswert</span>
+      </div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="bearbeitungsart" aria-labelledby="h-bearbeitungsart">
+      <h2 class="app-info__h2" id="h-bearbeitungsart"><span class="app-info__num">6</span>Bearbeitungsart</h2>
+      <p>Die Bearbeitungsart beschreibt, <em>wie</em> ein Fall behandelt wird – unabhängig von der Stufe. Geprüft wird von oben nach unten; die erste zutreffende Art gilt.</p>
+      <div data-render="service-rules"></div>
+      <div class="app-model-note" role="note">
+        <span class="app-model-note__label">Modell</span>
+        <p><a href="modelle.html#classes-of-service">Kanban Classes of Service</a>: vier Grundtypen, je nachdem, wie Verzögerungskosten über die Zeit entstehen.</p>
+        <span class="app-model-note__score">Wirkung: Expedite +35 in der Reihenfolge</span>
+      </div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="startklar" aria-labelledby="h-startklar">
+      <h2 class="app-info__h2" id="h-startklar"><span class="app-info__num">7</span>Startklar oder «Noch zu klären»</h2>
+      <p>Einen Platz in der Reihenfolge bekommt nur ein Fall, der sofort bearbeitet werden könnte. Trifft eine der folgenden Bedingungen zu, steht er in der Vergleichsliste unter «Noch zu klären» – mit dem Grund. Seine Stufe und Bearbeitungsart bleiben sichtbar.</p>
+      <div data-render="gates"></div>
+      <div class="app-model-note" role="note">
+        <span class="app-model-note__label">Modell</span>
+        <p><a href="modelle.html#definition-of-ready">Definition of Ready</a>: Startklar heisst, Voraussetzungen, Kompetenzen und Kapazität sind vorhanden.</p>
+        <span class="app-model-note__score">Wirkung: nicht startklar → kein Vergleichswert</span>
+      </div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="reihenfolge" aria-labelledby="h-reihenfolge">
+      <h2 class="app-info__h2" id="h-reihenfolge"><span class="app-info__num">8</span>Reihenfolge im Vergleich</h2>
+      <p>Startklare Fälle mit ausreichender Belastbarkeit erhalten einen Vergleichswert. Die Vergleichsliste sortiert danach, absteigend.</p>
+      <p class="app-formula"><span>Vergleichswert</span> = <span>100 × Stufe</span> + <span>Zuschläge</span></p>
+      <p class="sbb-text-s app-muted">Stufe: Trivial = 0, Minor = 1, Major = 2, Critical = 3, Blocker = 4.</p>
+      <div data-render="bonus-rules"></div>
+      <p><strong>Warum Zuschläge nie eine Stufe überspringen:</strong> Alle Zuschläge zusammen ergeben höchstens <span data-render="bonus-max">75</span> Punkte – weniger als die 100 Punkte einer Stufe. Ein Major-Fall mit allen Zuschlägen steht deshalb immer hinter jedem Critical-Fall. Die Zuschläge ordnen nur <em>innerhalb</em> derselben Stufe.</p>
+      <p>Bei Gleichstand gilt die Speicherreihenfolge. Die Liste vergleicht nur die Fälle, die in diesem Browser gespeichert sind; sie ist <strong>kein Jira-Rank</strong>.</p>
+      <div data-render="ordering-example"></div>
+      <div class="app-model-note" role="note">
+        <span class="app-model-note__label">Modell</span>
+        <p><a href="modelle.html#cost-of-delay">Cost of Delay und WSJF</a>: Was teurer wird, je länger es wartet, und was schnell erledigt ist, kommt zuerst. Hier vereinfacht zu festen Zuschlägen für Zeitkritik, Abhängigkeiten und Aufwand.</p>
+        <span class="app-model-note__score">Wirkung: Frist +24/+16/+8 · Abhängigkeit +10/+5 · kleiner Aufwand +1</span>
+      </div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="hinweise" aria-labelledby="h-hinweise">
+      <h2 class="app-info__h2" id="h-hinweise"><span class="app-info__num">9</span>Hinweise und Eskalation</h2>
+      <p>Manche Lagen gehören nicht in die normale Planung, sondern in einen zuständigen Prozess. Dann erscheint ein Hinweis – bei akuten Fällen schon während der Fragen, damit niemand auf die Auswertung wartet. Ein Hinweis ändert die Stufe nicht; er sagt, wer jetzt einzubeziehen ist.</p>
+      <div data-render="alerts"></div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="anzeige" aria-labelledby="h-anzeige">
+      <h2 class="app-info__h2" id="h-anzeige"><span class="app-info__num">10</span>Mindeststufe und «Was würde die Stufe heben?»</h2>
+      <p>Beides sind reine Anzeigen. Sie verwenden dieselbe Rechenlogik und fügen keine eigenen Regeln hinzu.</p>
+      <ul class="app-info__list">
+        <li><strong>Mindeststufe während der Fragen:</strong> Nach jedem «Weiter» zeigt die Skala neben der Frage, welche Stufe die bisherigen Antworten mindestens ergeben. Steigt sie, wird die auslösende Regel kurz eingeblendet. Beim Vorwärtsbeantworten kann sie nur steigen, nie sinken – weitere Antworten können nur zusätzliche Regeln auslösen.</li>
+        <li><strong>«Was würde die Stufe heben?»</strong> In der Auswertung probiert der Assistent für jede beantwortete Frage die anderen Antworten durch (bei Bedarf mit der neuen Folgefrage) und zeigt bis zu drei Varianten, die die nächsthöhere Stufe erreichen würden. Feststellungen wie «Dienst ausgefallen» kommen zuletzt – sie sind kein Hebel, sondern ein Fakt.</li>
+        <li><strong>Gespeicherte Fälle</strong> werden beim Öffnen mit dem aktuellen Regelwerk neu berechnet. So mischt die Liste nach einer Regeländerung keine alten und neuen Ergebnisse.</li>
+      </ul>
+    </section>
+
+    <section class="sbb-card app-info__section" id="beispiele" aria-labelledby="h-beispiele">
+      <h2 class="app-info__h2" id="h-beispiele"><span class="app-info__num">11</span>Durchgerechnete Beispiele</h2>
+      <p>Diese Fälle werden beim Laden der Seite mit der Rechenlogik des Assistenten berechnet. Nicht genannte Antworten: kein Ausfall, minimale Auswirkungen, kein Sicherheitsthema, keine Frist, keine Abhängigkeit, geringer Nutzen, mittlerer Aufwand, startklar, Belastbarkeit hoch.</p>
+      <div data-render="examples"></div>
+    </section>
+
+    <section class="sbb-card app-info__section" id="grenzen" aria-labelledby="h-grenzen">
+      <h2 class="app-info__h2" id="h-grenzen"><span class="app-info__num">12</span>Grenzen und Verantwortung</h2>
+      <ul class="app-info__list">
+        <li><strong>Empfehlung, keine Entscheidung.</strong> Das Team bewertet selbst; bei Konflikten oder Unklarheiten entscheidet der Product Owner.</li>
+        <li><strong>Prozesse haben Vorrang.</strong> Betriebs-, Incident- und Sicherheitsprozesse gelten unabhängig vom Ergebnis. Der Assistent ersetzt keine Eskalation.</li>
+        <li><strong>Bewusst einfach.</strong> Feste Stufen und Punkte statt Geldbeträgen und Wahrscheinlichkeiten – nachvollziehbar statt präzise.</li>
+        <li><strong>Workshop-Entwurf.</strong> Die Regeln sind ein Diskussionsstand, keine offizielle Richtlinie. Offene Fragen sind festgehalten, zum Beispiel ob schwerwiegende Auswirkungen allein schon Critical sein sollten.</li>
+      </ul>
+      <details class="sbb-expansion-panel app-mt-4">
+        <summary class="sbb-expansion-panel__header">Änderungen gegenüber dem ersten Prototyp (v0.1)</summary>
+        <div class="sbb-expansion-panel__content">
+          <ul class="app-info__list">
+            <li><strong>Unmittelbar drohender Schaden</strong> (Frist ≤ 24 h, schwerwiegende Folgen, keine Übergangslösung) ist neu ein Blocker; dafür gibt es eine Folgefrage und einen sofortigen Hinweis.</li>
+            <li><strong>Eingeschränkter Dienst ohne Umgehung</strong> ist neu mindestens Major.</li>
+            <li><strong>Kritische Abhängigkeit</strong> hebt allein nur noch auf Major; Critical erst mit erheblichen Folgen. Der Zuschlag bleibt.</li>
+            <li><strong>Exposition</strong> als Folgefrage bei Sicherheitsthemen: exponiert hebt «relevant» auf Major und «bestätigt» auf Critical.</li>
+            <li><strong>Fixed Date</strong> nur noch bei einer Frist mit erheblichen oder unklaren Folgen.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<!-- Lyne: <sbb-footer variant="clock-columns"> · identisch in index.html, impressum.html, datenschutz.html, lizenzen.html (Test prüft das) -->
+<footer class="sbb-footer">
+  <div class="sbb-footer__inner">
+    <div class="sbb-footer__grid">
+      <div>
+        <a class="sbb-footer__brand" href="./" aria-label="Priorisierungs-Assistent – Startseite">
+          <img src="assets/icon.svg" alt="" width="34" height="34">
+          <span><span class="sbb-footer__name">Priorisierungs-Assistent</span><span class="sbb-footer__sub">Workshop-Prototyp</span></span>
+        </a>
+        <p class="sbb-footer__about">Schritt für Schritt zu einer nachvollziehbaren Jira-Priorität und Bearbeitungsempfehlung. Keine Jira-Anbindung – gespeicherte Fälle bleiben in deinem Browser.</p>
+      </div>
+      <nav class="sbb-link-list" aria-labelledby="footer-site">
+        <h2 class="sbb-link-list__title" id="footer-site">Seite</h2>
+        <a href="./#wizard">Vorgang bewerten</a>
+        <a href="./#comparison">Vergleichsliste</a>
+        <a href="bewertungslogik.html">Bewertungslogik</a>
+        <a href="modelle.html">Modelle</a>
+        <a href="./#handy">Aufs Handy</a>
+      </nav>
+      <nav class="sbb-link-list" aria-labelledby="footer-legal">
+        <h2 class="sbb-link-list__title" id="footer-legal">Rechtliches</h2>
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="lizenzen.html">Open-Source-Lizenzen</a>
+      </nav>
+      <div class="sbb-link-list">
+        <h2 class="sbb-link-list__title">Kontakt</h2>
+        <a href="mailto:swissinnovationstudios@gmail.com">swissinnovationstudios@gmail.com</a>
+        <p>Swiss Innovation Studios<br>3013 Bern, Schweiz</p>
+      </div>
+    </div>
+    <div class="sbb-footer__bottom">
+      <span>© 2026 Swiss Innovation Studios</span>
+      <span>Made with Vanilla JS · Hosted on GitHub Pages</span>
+    </div>
+  </div>
+</footer>
+<script type="module" src="js/logic-page.js"></script>
+</body>
+</html>

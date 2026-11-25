@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelle · Priorisierungs-Assistent</title>
+<meta name="description" content="Die Modelle hinter dem Priorisierungs-Assistenten – Kanban Classes of Service, Cost of Delay und WSJF, Auswirkung × Dringlichkeit, Jira-Prioritäten, Definition of Ready, Confidence und Exposition – und wie sie in die Berechnung eingehen.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preload" href="fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="app-skip" href="#inhalt">Zum Inhalt</a>
+
+<!-- Lyne: <sbb-header> -->
+<header class="sbb-header">
+  <div class="sbb-header__inner">
+    <a class="sbb-header__brand" href="./" aria-label="Priorisierungs-Assistent – Startseite">
+      <img class="sbb-header__mark" src="assets/icon.svg" alt="" width="32" height="32">
+      <span class="sbb-header__title">Priorisierungs-Assistent<span class="sbb-header__sub">Modelle</span></span>
+    </a>
+    <div class="sbb-header__actions">
+      <!-- Header-Link Bewertungslogik -->
+      <a class="sbb-transparent-button app-header-link is-active" href="bewertungslogik.html" aria-label="Bewertungslogik">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+        <span class="app-hide-s">Bewertungslogik</span>
+      </a>
+      <a class="sbb-secondary-button" href="./" aria-label="Zum Assistenten">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        <span class="app-hide-s">Zum Assistenten</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="app-container" id="inhalt" tabindex="-1">
+  <div class="app-info">
+    <div class="app-legal__head">
+      <p class="app-overline">Worauf der Assistent aufbaut</p>
+      <h1 class="sbb-title sbb-title--1">Modelle</h1>
+      <p class="app-legal__updated">Sieben Modelle · vereinfacht und kombiniert</p>
+    </div>
+    <nav class="app-subnav" aria-label="Erklärungen">
+      <a class="app-subnav__link" href="bewertungslogik.html">Bewertungslogik</a>
+      <a class="app-subnav__link is-active" href="modelle.html" aria-current="page">Modelle</a>
+    </nav>
+    <p class="app-info__lead">Der Assistent erfindet nichts neu. Er kombiniert bekannte Modelle aus IT-Betrieb, Kanban und Produktmanagement – jedes für die Frage, die es am besten beantwortet. Keines wird eins zu eins übernommen: Wo ein Modell mit Geldbeträgen, Matrizen oder Wahrscheinlichkeiten rechnet, nutzt der Assistent wenige feste Stufen und Punkte. Das macht ihn weniger präzise, aber für jedes Teammitglied nachvollziehbar.</p>
+
+    <section class="sbb-card app-info__section" id="ueberblick" aria-labelledby="h-m-ueberblick">
+      <h2 class="app-info__h2" id="h-m-ueberblick">Überblick</h2>
+      <div class="app-table-wrap" tabindex="0" role="region" aria-label="Modelle im Überblick">
+        <table class="app-table">
+          <caption class="app-visually-hidden">Modelle im Überblick</caption>
+          <thead><tr><th scope="col">Modell</th><th scope="col">Beantwortet die Frage</th><th scope="col">Wirkt im Assistenten auf</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#jira-prioritaeten"><strong>Jira-Prioritäten</strong></a></td><td>Auf welcher Skala wird eingestuft?</td><td>Stufe 0–4 · × 100 im Vergleichswert</td></tr>
+            <tr><td><a href="#auswirkung-dringlichkeit"><strong>Auswirkung × Dringlichkeit</strong></a> (ITIL)</td><td>Wie schwer wiegt der Fall, und wie schnell muss etwas passieren?</td><td>Regeln für die Jira-Priorität</td></tr>
+            <tr><td><a href="#exposition"><strong>Exposition</strong></a> (angelehnt an CVSS)</td><td>Wie leicht ist eine Schwachstelle ausnutzbar?</td><td>Hebt Sicherheitsthemen auf Major bzw. Critical</td></tr>
+            <tr><td><a href="#classes-of-service"><strong>Kanban Classes of Service</strong></a></td><td>Wie wird der Fall behandelt?</td><td>Bearbeitungsart · Expedite +35</td></tr>
+            <tr><td><a href="#cost-of-delay"><strong>Cost of Delay und WSJF</strong></a></td><td>Was kommt innerhalb einer Stufe zuerst?</td><td>Zuschläge +1 bis +24</td></tr>
+            <tr><td><a href="#definition-of-ready"><strong>Definition of Ready</strong></a></td><td>Kann sofort losgelegt werden?</td><td>Startklar oder «Noch zu klären»</td></tr>
+            <tr><td><a href="#belastbarkeit"><strong>Confidence</strong></a> (aus RICE)</td><td>Wie sicher sind die Angaben?</td><td>Belastbarkeit · vorläufig</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="app-info__more">Wie die Teile zusammenspielen, zeigt die <a href="bewertungslogik.html">Bewertungslogik</a> Schritt für Schritt.</p>
+    </section>
+
+    <section class="sbb-card app-info__section app-model" id="jira-prioritaeten" aria-labelledby="h-jira">
+      <p class="app-model__kicker">Skala</p>
+      <h2 class="app-info__h2" id="h-jira">Jira-Prioritäten</h2>
+      <div class="app-model__grid">
+        <div>
+          <h3 class="app-info__h3">Kurz erklärt</h3>
+          <p>Jira führte lange fünf Standard-Prioritäten: Blocker, Critical, Major, Minor und Trivial. Neuere Versionen heissen standardmässig Highest bis Lowest; Teams können die Stufen frei benennen. Jira selbst legt nicht fest, was eine Stufe bedeutet – das muss jedes Team für sich definieren.</p>
+        </div>
+        <div>
+          <h3 class="app-info__h3">So nutzt der Assistent es</h3>
+          <ul class="app-info__list">
+            <li>Die fünf Stufen sind die Ergebnis-Skala: Trivial = 0, Minor = 1, Major = 2, Critical = 3, Blocker = 4.</li>
+            <li>Was jede Stufe bedeutet, legen die <a href="bewertungslogik.html#prioritaet">Regeln</a> fest – zum Beispiel Blocker nur bei akutem oder unmittelbar drohendem schwerem Schaden ohne Umgehung.</li>
+            <li>Im Vergleichswert zählt jede Stufe 100 Punkte. Dadurch überholt nie ein Fall einer tieferen Stufe einen höheren.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="app-model__score"><span>Wirkung</span> Stufe 0–4 · Vergleichswert = 100 × Stufe + Zuschläge</p>
+      <p class="app-model__sources">Mehr dazu: <a href="https://www.atlassian.com/blog/jira/organizing-issues-priority-optimize-delivery" target="_blank" rel="noopener">Atlassian: Organizing issues by priority</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/what-are-priority-levels-in-jira-service-management/" target="_blank" rel="noopener">Atlassian: Priority levels</a></p>
+    </section>
+
+    <section class="sbb-card app-info__section app-model" id="auswirkung-dringlichkeit" aria-labelledby="h-itil">
+      <p class="app-model__kicker">Jira-Priorität</p>
+      <h2 class="app-info__h2" id="h-itil">Auswirkung × Dringlichkeit (ITIL)</h2>
+      <div class="app-model__grid">
+        <div>
+          <h3 class="app-info__h3">Kurz erklärt</h3>
+          <p>Im IT-Service-Management nach ITIL ergibt sich die Priorität eines Vorfalls aus zwei Grössen: der <strong>Auswirkung</strong> (wie gross ist der Schaden, wie viele sind betroffen?) und der <strong>Dringlichkeit</strong> (wie schnell muss eine Lösung her?). Eine Matrix ordnet jeder Kombination eine Priorität zu – hohe Auswirkung und hohe Dringlichkeit ergeben die höchste.</p>
+        </div>
+        <div>
+          <h3 class="app-info__h3">So nutzt der Assistent es</h3>
+          <ul class="app-info__list">
+            <li><strong>Auswirkung</strong> wird direkt gefragt und ergibt die Grundstufe: minimal → Trivial, begrenzt → Minor, wesentlich oder schwerwiegend → Major.</li>
+            <li><strong>Dringlichkeit</strong> wird nicht als eine Frage gestellt, sondern aus konkreten Fakten abgeleitet: Ist ein Dienst ausgefallen? Gibt es eine tragfähige Umgehung? Läuft eine Frist in 24 Stunden oder 7 Tagen ab, und was passiert dann?</li>
+            <li>Statt einer Matrix gilt die <strong>höchste zutreffende Regel</strong>. Beispiel: kritischer Dienst ausgefallen + schwerwiegende Auswirkung + keine Umgehung → Blocker.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Eine Matrix verlangt, dass alle «Dringlichkeit» gleich verstehen. Konkrete Fragen (Ausfall, Umgehung, Frist, Folgen) lassen weniger Interpretationsspielraum. Offen ist, ob schwerwiegende Auswirkungen allein schon Critical sein sollten.</p>
+      <p class="app-model__score"><span>Wirkung</span> bestimmt die meisten Stufenregeln · siehe <a href="bewertungslogik.html#prioritaet">Regeltabelle</a></p>
+      <p class="app-model__sources">Mehr dazu: <a href="https://wiki.en.it-processmaps.com/index.php/Checklist_Incident_Priority" target="_blank" rel="noopener">IT Process Wiki: Incident Priority</a></p>
+    </section>
+
+    <section class="sbb-card app-info__section app-model" id="exposition" aria-labelledby="h-expo">
+      <p class="app-model__kicker">Jira-Priorität · Sicherheit</p>
+      <h2 class="app-info__h2" id="h-expo">Exposition (angelehnt an CVSS)</h2>
+      <div class="app-model__grid">
+        <div>
+          <h3 class="app-info__h3">Kurz erklärt</h3>
+          <p>Das Common Vulnerability Scoring System (CVSS) des Forums FIRST beschreibt, wie schwer eine Schwachstelle technisch wiegt. Es bewertet unter anderem, ob ein Angriff übers Netz möglich ist, und in eigenen Gruppen, ob bereits Exploits im Umlauf sind und wie die konkrete Umgebung aussieht. Ein hoher technischer Wert allein sagt deshalb noch nicht, wie dringend es im eigenen Betrieb ist.</p>
+        </div>
+        <div>
+          <h3 class="app-info__h3">So nutzt der Assistent es</h3>
+          <ul class="app-info__list">
+            <li>Eine einzige Folgefrage bündelt die Idee: <em>Von aussen erreichbar oder Ausnutzung beobachtet?</em> – oder <em>nur intern erreichbar bzw. wirksam geschützt?</em></li>
+            <li>Gefragt wird nur bei einem Sicherheitsthema, das «relevant» oder «bestätigt, planbar» ist – dort, wo die Antwort etwas ändert.</li>
+            <li>Exponiert hebt an: relevantes Thema → <strong>Major</strong>, bestätigtes Risiko → <strong>Critical</strong> mit Hinweis an die Security-Fachstelle.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Es wird kein CVSS-Wert berechnet. Akute Vorfälle und zeitkritische Risiken laufen ohnehin über eigene Regeln und den zuständigen Meldeprozess.</p>
+      <p class="app-model__score"><span>Wirkung</span> relevant + exponiert → Major · bestätigt + exponiert → Critical</p>
+      <p class="app-model__sources">Mehr dazu: <a href="https://www.first.org/cvss/v4.0/specification-document" target="_blank" rel="noopener">FIRST: CVSS v4.0 Specification</a></p>
+    </section>
+
+    <section class="sbb-card app-info__section app-model" id="classes-of-service" aria-labelledby="h-cos">
+      <p class="app-model__kicker">Bearbeitungsart</p>
+      <h2 class="app-info__h2" id="h-cos">Kanban Classes of Service</h2>
+      <div class="app-model__grid">
+        <div>
+          <h3 class="app-info__h3">Kurz erklärt</h3>
+          <p>Die Kanban-Methode unterscheidet Arbeit danach, wie Verzögerung Kosten verursacht. Vier Grundtypen sind verbreitet: <strong>Expedite</strong> für echte Notfälle, die alles andere unterbrechen; <strong>Fixed Date</strong> für Arbeit, bei der ab einem Datum ein deutlicher Nachteil entsteht; <strong>Standard</strong> für die normale Arbeit, die möglichst bald fertig sein soll; <strong>Intangible</strong> für Arbeit ohne kurzfristigen Druck, die aber später teuer werden kann – etwa Wartung oder technische Schulden.</p>
+        </div>
+        <div>
+          <h3 class="app-info__h3">So nutzt der Assistent es</h3>
+          <div data-render="cos-table"></div>
+        </div>
+      </div>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kanban steuert Classes of Service über eigene Bahnen, WIP-Limits und Startzeitpunkte. Der Assistent gibt nur die Klasse und eine Handlungsempfehlung aus; wie das Board damit umgeht, entscheidet das Team.</p>
+      <p class="app-model__score"><span>Wirkung</span> Expedite +35 · Fixed Date: Fristzuschlag +24 / +16 / +8 · Bearbeitungsempfehlung</p>
+      <p class="app-model__sources">Mehr dazu: <a href="https://kanban.university/glossary/" target="_blank" rel="noopener">Kanban University: Glossar</a> · <a href="https://kanbantool.com/kanban-guide/classes-of-service" target="_blank" rel="noopener">Kanban Tool: Classes of Service</a></p>
+    </section>
+
+    <section class="sbb-card app-info__section app-model" id="cost-of-delay" aria-labelledby="h-cod">
+      <p class="app-model__kicker">Reihenfolge</p>
+      <h2 class="app-info__h2" id="h-cod">Cost of Delay und WSJF</h2>
+      <div class="app-model__grid">
+        <div>
+          <h3 class="app-info__h3">Kurz erklärt</h3>
+          <p><strong>Cost of Delay</strong> (Don Reinertsen) fragt: Was kostet es, wenn diese Arbeit eine Woche später fertig wird? Er ergibt sich aus Wert und Dringlichkeit. Teilt man ihn durch die Dauer, entsteht eine Reihenfolge, die den Gesamtschaden minimiert – kurze, teure Arbeit zuerst.</p>
+          <p><strong>WSJF</strong> (Weighted Shortest Job First) im Scaled Agile Framework schätzt dafür relativ: Nutzen + Zeitkritik + Risikoreduktion bzw. ermöglichte Chancen, geteilt durch die Grösse der Arbeit.</p>
+        </div>
+        <div>
+          <h3 class="app-info__h3">So nutzt der Assistent es</h3>
+          <div data-render="cod-table"></div>
+        </div>
+      </div>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kein Teilen durch den Aufwand und keine Geldbeträge. Die Zuschläge sind gedeckelt (zusammen höchstens <span data-render="bonus-max">75</span> Punkte), damit sie nur <em>innerhalb</em> einer Stufe ordnen. Ein dringlicher Major-Fall überholt so nie einen Critical-Fall.</p>
+      <p class="app-model__score"><span>Wirkung</span> Frist +24 / +16 / +8 · Abhängigkeit +10 / +5 · kleiner Aufwand +1</p>
+      <p class="app-model__sources">Mehr dazu: <a href="https://blackswanfarming.com/cost-of-delay" target="_blank" rel="noopener">Black Swan Farming: Cost of Delay</a> · <a href="https://framework.scaledagile.com/wsjf/" target="_blank" rel="noopener">SAFe: Weighted Shortest Job First</a></p>
+    </section>
+
+    <section class="sbb-card app-info__section app-model" id="definition-of-ready" aria-labelledby="h-dor">
+      <p class="app-model__kicker">Startklar</p>
+      <h2 class="app-info__h2" id="h-dor">Definition of Ready</h2>
+      <div class="app-model__grid">
+        <div>
+          <h3 class="app-info__h3">Kurz erklärt</h3>
+          <p>Eine Definition of Ready hält fest, was erfüllt sein muss, bevor ein Team eine Arbeit beginnt – zum Beispiel geklärte Anforderungen, gelöste Abhängigkeiten oder verfügbare Fachleute. Jedes Team legt seine eigenen Kriterien fest. Zu streng gehandhabt kann sie zur Hürde werden, die Arbeit unnötig aufhält.</p>
+        </div>
+        <div>
+          <h3 class="app-info__h3">So nutzt der Assistent es</h3>
+          <ul class="app-info__list">
+            <li>Eine Frage: <em>Ist der Vorgang startklar – Voraussetzungen, Kompetenzen und Kapazitäten vorhanden?</em></li>
+            <li>«Nein» oder «Unklar» → der Fall steht unter <a href="bewertungslogik.html#startklar">«Noch zu klären»</a> und erhält keinen Platz in der Reihenfolge.</li>
+            <li>Stufe und Bearbeitungsart bleiben trotzdem sichtbar – ein Blocker bleibt ein Blocker, auch wenn noch etwas fehlt.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Keine Checkliste im Tool. Was «startklar» im Team konkret heisst, gehört in die Teamvereinbarung.</p>
+      <p class="app-model__score"><span>Wirkung</span> nicht startklar → kein Vergleichswert</p>
+      <p class="app-model__sources">Mehr dazu: <a href="https://agilealliance.org/glossary/definition-of-ready" target="_blank" rel="noopener">Agile Alliance: Definition of Ready</a></p>
+    </section>
+
+    <section class="sbb-card app-info__section app-model" id="belastbarkeit" aria-labelledby="h-conf">
+      <p class="app-model__kicker">Belastbarkeit</p>
+      <h2 class="app-info__h2" id="h-conf">Confidence (aus dem RICE-Modell)</h2>
+      <div class="app-model__grid">
+        <div>
+          <h3 class="app-info__h3">Kurz erklärt</h3>
+          <p>RICE ist ein Bewertungsmodell aus dem Produktmanagement (Reach, Impact, Confidence, Effort), entwickelt bei Intercom. Der Faktor <strong>Confidence</strong> drückt aus, wie gut die übrigen Schätzungen belegt sind – etwa 100 % bei soliden Daten, 50 % bei einem Bauchgefühl. Er verhindert, dass begeisternde, aber unbelegte Ideen nach oben rutschen.</p>
+        </div>
+        <div>
+          <h3 class="app-info__h3">So nutzt der Assistent es</h3>
+          <ul class="app-info__list">
+            <li>Die letzte Frage fragt nach deiner Einschätzung: hoch, mittel oder niedrig.</li>
+            <li>«Unklar» bei einer Kernfrage senkt automatisch auf <strong>Niedrig</strong>; «Unklar» bei Aufwand oder Startklarheit auf <strong>Mittel</strong>.</li>
+            <li>Niedrig → die Stufe gilt als <strong>vorläufig</strong>, der Fall erhält keinen Vergleichswert und steht unter «Noch zu klären».</li>
+          </ul>
+        </div>
+      </div>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> RICE multipliziert mit der Confidence und verkleinert so den Wert. Der Assistent senkt nie eine Stufe wegen Unsicherheit – gerade in einer akuten Lage wäre das gefährlich. Er markiert sie als vorläufig und verlangt die Klärung.</p>
+      <p class="app-model__score"><span>Wirkung</span> Hoch / Mittel / Niedrig · Niedrig → vorläufig, kein Vergleichswert</p>
+      <p class="app-model__sources">Mehr dazu: <a href="https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/" target="_blank" rel="noopener">Intercom: RICE – simple prioritization</a></p>
+    </section>
+  </div>
+</main>
+
+<!-- Lyne: <sbb-footer variant="clock-columns"> · identisch in index.html, impressum.html, datenschutz.html, lizenzen.html (Test prüft das) -->
+<footer class="sbb-footer">
+  <div class="sbb-footer__inner">
+    <div class="sbb-footer__grid">
+      <div>
+        <a class="sbb-footer__brand" href="./" aria-label="Priorisierungs-Assistent – Startseite">
+          <img src="assets/icon.svg" alt="" width="34" height="34">
+          <span><span class="sbb-footer__name">Priorisierungs-Assistent</span><span class="sbb-footer__sub">Workshop-Prototyp</span></span>
+        </a>
+        <p class="sbb-footer__about">Schritt für Schritt zu einer nachvollziehbaren Jira-Priorität und Bearbeitungsempfehlung. Keine Jira-Anbindung – gespeicherte Fälle bleiben in deinem Browser.</p>
+      </div>
+      <nav class="sbb-link-list" aria-labelledby="footer-site">
+        <h2 class="sbb-link-list__title" id="footer-site">Seite</h2>
+        <a href="./#wizard">Vorgang bewerten</a>
+        <a href="./#comparison">Vergleichsliste</a>
+        <a href="bewertungslogik.html">Bewertungslogik</a>
+        <a href="modelle.html">Modelle</a>
+        <a href="./#handy">Aufs Handy</a>
+      </nav>
+      <nav class="sbb-link-list" aria-labelledby="footer-legal">
+        <h2 class="sbb-link-list__title" id="footer-legal">Rechtliches</h2>
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="lizenzen.html">Open-Source-Lizenzen</a>
+      </nav>
+      <div class="sbb-link-list">
+        <h2 class="sbb-link-list__title">Kontakt</h2>
+        <a href="mailto:swissinnovationstudios@gmail.com">swissinnovationstudios@gmail.com</a>
+        <p>Swiss Innovation Studios<br>3013 Bern, Schweiz</p>
+      </div>
+    </div>
+    <div class="sbb-footer__bottom">
+      <span>© 2026 Swiss Innovation Studios</span>
+      <span>Made with Vanilla JS · Hosted on GitHub Pages</span>
+    </div>
+  </div>
+</footer>
+<script type="module" src="js/models-page.js"></script>
+</body>
+</html>

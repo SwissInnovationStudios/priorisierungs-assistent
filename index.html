@@ -28,6 +28,11 @@
       <div class="sbb-header__title">Priorisierungs-Assistent<span class="sbb-header__sub" data-ruleset></span></div>
     </div>
     <div class="sbb-header__actions">
+      <!-- Header-Link Bewertungslogik -->
+      <a class="sbb-transparent-button app-header-link" href="bewertungslogik.html" aria-label="Bewertungslogik">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+        <span class="app-hide-s">Bewertungslogik</span>
+      </a>
       <button type="button" class="sbb-transparent-button app-hide-s" id="qr-open">
         <svg class="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 19h1.5M19.5 14v2"/></svg>
         Aufs Handy
@@ -48,17 +53,6 @@
   </div>
 
   <!-- Lyne: <sbb-accordion><sbb-expansion-panel> -->
-  <details class="sbb-card sbb-expansion-panel app-about" id="logik">
-    <summary class="sbb-expansion-panel__header">Wie funktioniert die Bewertungslogik?</summary>
-    <div class="sbb-expansion-panel__content app-stack">
-      <p><strong>Jira-Priorität:</strong> Jede Antwort kann eine Regel auslösen. Die höchste zutreffende Regel bestimmt die Stufe; weitere Gründe heben sie nicht zusätzlich an. Geprüft werden Betriebs- und Sicherheitslage, Auswirkungen, Fristfolgen, Abhängigkeiten und Nutzen. Aufwand ändert die Stufe nicht.</p>
-      <p>Ein nahes Datum allein ist kein Grund für eine hohe Priorität: Entscheidend ist, was passiert, wenn die Frist verpasst wird. Droht innerhalb von 24 Stunden ein schwerwiegender Schaden ohne Übergangslösung, ist das ein Blocker. Eine Blockade anderer Arbeiten hebt allein höchstens auf Major; Critical erst, wenn die Folgen erheblich sind.</p>
-      <p><strong>Bearbeitungsart</strong> nach Kanban Classes of Service: Expedite bei Ausfall oder akutem Vorfall, Fixed Date nur bei einer Frist mit erheblichen Folgen, Intangible für langfristig Wichtiges ohne Zeitdruck, sonst Standard.</p>
-      <p><strong>Vergleichsliste:</strong> Startklare und ausreichend beurteilbare Fälle werden nach Stufe geordnet. Innerhalb derselben Stufe ziehen Expedite, eine wirksame Frist, Abhängigkeiten und kleiner Aufwand nach vorne – nie über die nächste Stufe hinaus. Bei Gleichstand gilt die Speicherreihenfolge. Unklare oder nicht startklare Fälle stehen getrennt. Die Liste ist kein Jira-Rank.</p>
-      <p>Der Assistent gibt Empfehlungen. Das Team bewertet eigenständig, der Product Owner entscheidet bei Priorisierungskonflikten oder Unklarheiten. Bestehende Betriebs- und Sicherheitsprozesse haben Vorrang.</p>
-      <p class="sbb-text-s app-muted app-mb-0">Die Regeln sind ein Workshop-Entwurf und keine offizielle SBB-Richtlinie. Die Anwendung ersetzt keine zuständigen Eskalationsprozesse.</p>
-    </div>
-  </details>
 
 </main>
 
@@ -77,7 +71,8 @@
         <h2 class="sbb-link-list__title" id="footer-site">Seite</h2>
         <a href="./#wizard">Vorgang bewerten</a>
         <a href="./#comparison">Vergleichsliste</a>
-        <a href="./#logik">Bewertungslogik</a>
+        <a href="bewertungslogik.html">Bewertungslogik</a>
+        <a href="modelle.html">Modelle</a>
         <a href="./#handy">Aufs Handy</a>
       </nav>
       <nav class="sbb-link-list" aria-labelledby="footer-legal">
