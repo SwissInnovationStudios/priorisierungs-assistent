@@ -383,6 +383,14 @@ a.sbb-header__brand { color: inherit; text-decoration: none; }
 .app-rows { list-style: none; margin: 0; padding: 0; }
 .app-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--sbb-spacing-fixed-3x); align-items: start; padding: var(--sbb-spacing-fixed-3x) var(--sbb-spacing-fixed-2x); margin-inline: calc(-1 * var(--sbb-spacing-fixed-2x)); border-bottom: var(--sbb-border-width-1x) solid var(--app-color-line); border-radius: var(--sbb-border-radius-4x); }
 .app-row:last-child { border-bottom: 0; }
+/* Ganze Zeile öffnet den Fall: der Namens-Button streckt seine Klickfläche über die Zeile, «Entfernen» liegt darüber. */
+.app-row.is-clickable { position: relative; cursor: pointer; transition: background-color var(--sbb-animation-duration-2x, 0.15s); }
+.app-row.is-clickable:hover { background: rgb(29 79 134 / 0.06); }
+.app-row__open { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
+.app-row__open::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.app-row__open:focus-visible { outline: none; }
+.app-row__open:focus-visible::after { outline: var(--sbb-focus-outline-width) solid var(--sbb-focus-outline-color); outline-offset: -2px; }
+.app-row__actions { position: relative; z-index: 1; }
 .app-row.is-new { background: var(--app-color-info-bg); animation: app-flash 1.6s ease-out; }
 @keyframes app-flash { from { background: color-mix(in srgb, var(--sbb-color-primary) 14%, white); } }
 .app-row.is-new :is(.app-row__meta, .app-row__bonus) { color: var(--sbb-color-iron); }
@@ -395,6 +403,15 @@ a.sbb-header__brand { color: inherit; text-decoration: none; }
 .app-empty { padding: var(--sbb-spacing-fixed-5x); border: var(--sbb-border-width-1x) dashed var(--sbb-color-storm); border-radius: var(--sbb-border-radius-4x); color: var(--app-color-muted); text-align: center; font-size: var(--sbb-typo-scale-0-875x); }
 .app-only-stacked { display: none; }
 @media (max-width: 56rem) { .app-only-stacked { display: inline-flex; } }
+
+/* Tastatur-Hinweis (nur mit Maus/Trackpad sichtbar, auf Touch-Geräten ausgeblendet) */
+.app-keys { display: none; margin: var(--sbb-spacing-fixed-3x) 0 0; color: var(--app-color-muted); font-size: var(--sbb-typo-scale-0-75x); }
+@media (hover: hover) and (pointer: fine) { .app-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; justify-content: flex-end; } }
+.app-keys kbd { display: inline-grid; place-items: center; min-width: 1.5rem; padding: 0.05rem 0.35rem; border: var(--sbb-border-width-1x) solid var(--app-color-card-border); border-bottom-width: 2px; border-radius: 0.375rem; background: var(--sbb-color-white); color: var(--app-color-text); font: inherit; font-weight: 600; line-height: 1.4; }
+.app-keys__sep { margin-inline: 0.2rem; }
+.sbb-radio-button-group.is-nudged { animation: app-nudge 0.32s ease-in-out; }
+@keyframes app-nudge { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .sbb-radio-button-group.is-nudged { animation: none; outline: 2px solid var(--sbb-color-primary); outline-offset: 4px; border-radius: var(--sbb-border-radius-4x); } }
 
 /* Rechtliche Seiten (Impressum / Datenschutz / Lizenzen) – Aufbau wie bei Teide */
 .app-legal { max-width: 52rem; margin: 0 auto; padding-top: clamp(1.5rem, 5vw, 3.5rem); }

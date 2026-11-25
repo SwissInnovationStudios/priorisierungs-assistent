@@ -189,7 +189,7 @@ function startView() {
   input.value = name;
   input.addEventListener('input', () => { name = input.value; });
   const field = el('div', { class: 'sbb-form-field' }, [el('label', { for: 'case-title', class: 'sbb-form-field__label' }, 'Ticket oder Aufgabenbezeichnung (optional)'), input]);
-  const form = el('form', { novalidate: true }, [field, el('button', { type: 'submit', class: 'sbb-button app-block' }, 'Bewertung starten')]);
+  const form = el('form', { novalidate: true }, [field, el('button', { type: 'submit', class: 'sbb-button app-block', 'data-key': 'next' }, 'Bewertung starten'), keyHint([['→', 'oder Enter: Bewertung starten']])]);
   form.addEventListener('submit', e => { e.preventDefault(); begin(); });
 
   const step = (n, title, text) => el('li', { class: 'app-steps__item' }, [el('span', { class: 'app-steps__num', 'aria-hidden': 'true' }, String(n)), el('div', {}, [el('strong', {}, title), txt(text, 'sbb-text-xs app-muted')])]);
@@ -240,7 +240,7 @@ function questionView() {
   const legend = el('legend', { class: 'sbb-title sbb-title--2', tabindex: '-1', 'data-focus': '', 'data-test': 'question-title' }, q.title);
   const group = el('div', { class: 'sbb-radio-button-group' });
   let selected = a[q.id] || '';
-  const next = el('button', { type: 'submit', class: 'sbb-button' }, i === total - 1 ? 'Empfehlung anzeigen' : 'Weiter');
+  const next = el('button', { type: 'submit', class: 'sbb-button', 'data-key': 'next' }, i === total - 1 ? 'Empfehlung anzeigen' : 'Weiter');
   next.disabled = !selected;
 
   q.options.forEach(([id, label]) => {
@@ -254,7 +254,8 @@ function questionView() {
 
   const form = el('form', { novalidate: true }, [
     el('fieldset', { class: 'app-fieldset' }, [legend, q.hint ? txt(q.hint, 'sbb-text-s app-muted app-mt-1') : null, group]),
-    el('div', { class: 'sbb-action-group sbb-action-group--split' }, [button('Zurück', back, 'sbb-secondary-button'), next])
+    el('div', { class: 'sbb-action-group sbb-action-group--split' }, [button('Zurück', back, 'sbb-secondary-button'), next]),
+    keyHint([['↑ ↓', 'Antwort wählen'], ['→', i === total - 1 ? 'Empfehlung' : 'Weiter'], ['←', 'Zurück']])
   ]);
   form.addEventListener('submit', e => { e.preventDefault(); if (selected) advance(selected); });
 
@@ -389,9 +390,11 @@ function resultView() {
     render(true);
   }, 'sbb-button');
   save.disabled = saved;
+  if (!saved) save.dataset.key = 'next';
   wiz.append(el('div', { class: 'sbb-action-group sbb-action-group--split' }, saved
-    ? [button('Neuer Fall', newCase, 'sbb-secondary-button'), button('Zur Vergleichsliste', () => compare.scrollIntoView({ behavior: 'smooth', block: 'start' }), 'sbb-transparent-button app-only-stacked')]
+    ? [button('Neuer Fall', newCase, 'sbb-secondary-button', { 'data-key': 'next' }), button('Zur Vergleichsliste', () => compare.scrollIntoView({ behavior: 'smooth', block: 'start' }), 'sbb-transparent-button app-only-stacked')]
     : [button(editingId ? 'Abbrechen' : 'Zurück', editingId ? newCase : back, 'sbb-secondary-button'), save]));
+  wiz.append(keyHint(saved ? [['→', 'Neuer Fall']] : [['←', 'letzte Frage'], ['→', editingId ? 'Änderungen speichern' : 'Zur Vergleichsliste hinzufügen']]));
 }
 
 // «Was würde die Stufe heben?» – rechnerische Varianten aus der Engine, keine Aufforderung, Antworten anzupassen.
@@ -429,15 +432,17 @@ function comparisonView() {
   const row = (c, n, meta, isPending = false) => {
     const bonuses = isPending ? [] : bonusList(c.result.bonuses);
     const isEditing = c.id && c.id === editingId;
-    return el('li', { class: 'app-row' + (cases[c.i] === savedCase ? ' is-new' : '') + (isEditing ? ' is-editing' : '') }, [
+    return el('li', { class: 'app-row' + (c.answers ? ' is-clickable' : '') + (cases[c.i] === savedCase ? ' is-new' : '') + (isEditing ? ' is-editing' : '') }, [
       el('span', { class: 'app-row__pos' + (isPending ? ' app-row__pos--pending' : ''), 'aria-hidden': 'true' }, n),
       el('div', { class: 'app-row__body' }, [
-        el('div', { class: 'app-row__name', 'data-test': isPending ? 'pending' : 'ordered' }, c.name),
+        // Ganze Zeile anklickbar (Button mit über die Zeile gestreckter Klickfläche, siehe .app-row__open).
+        c.answers
+          ? el('button', { type: 'button', class: 'app-row__name app-row__open', 'data-test': isPending ? 'pending' : 'ordered', 'aria-label': `Fall «${c.name}» öffnen`, 'aria-current': isEditing ? 'true' : undefined, click: () => startEdit(c.id) }, c.name)
+          : el('div', { class: 'app-row__name', 'data-test': isPending ? 'pending' : 'ordered' }, c.name),
         el('div', { class: 'app-row__meta' }, [chip(c.result.priority), el('span', {}, meta)]),
         bonuses.length ? el('div', { class: 'app-row__bonus' }, bonuses.map(b => `+${b.points} ${b.label}`).join(' · ')) : null
       ]),
       el('div', { class: 'app-row__actions' }, [
-        c.answers ? el('button', { type: 'button', class: 'sbb-mini-button', 'aria-label': `Fall «${c.name}» bearbeiten`, title: 'Bearbeiten', 'data-test': 'edit', click: () => startEdit(c.id) }, [icon('edit', 'app-icon app-icon--s')]) : null,
         el('button', { type: 'button', class: 'sbb-mini-button', 'aria-label': `Fall «${c.name}» entfernen`, title: 'Entfernen', click: remove(c.i) }, [icon('close', 'app-icon app-icon--s')])
       ])
     ]);
@@ -471,6 +476,50 @@ function render(focus = false) {
   if (focus) wiz.querySelector('[data-focus]')?.focus({ preventScroll: true });
   if (focus && wiz.getBoundingClientRect().top < 0) wiz.scrollIntoView({ block: 'start' });
 }
+
+// ---------- Tastatur: ↑/↓ Antwort wählen, → weiter, ← zurück ----------
+// Ergänzt Maus/Touch/Tab/Enter, ersetzt sie nicht. Ausgenommen: Textfelder (ausser → am Ende des Titels
+// auf der Startseite), offene Dialoge, Vergleichsliste, Erklärung und Footer (dort normales Scrollen).
+function keyHint(items) {
+  return el('p', { class: 'app-keys', 'aria-hidden': 'true' }, items.flatMap(([k, label], n) => [n ? el('span', { class: 'app-keys__sep' }, '·') : null, el('kbd', {}, k), ' ' + label]).filter(Boolean));
+}
+function nudge() {
+  const g = wiz.querySelector('.sbb-radio-button-group');
+  if (!g) return;
+  g.classList.remove('is-nudged'); void g.offsetWidth; g.classList.add('is-nudged');
+}
+function keyNav(key) {
+  if (view === 'start') { if (key === 'ArrowRight') { begin(); return true; } return false; }
+  if (view === 'question') {
+    if (key === 'ArrowUp' || key === 'ArrowDown') {
+      const radios = [...wiz.querySelectorAll('input[type=radio]')];
+      const cur = radios.findIndex(r => r.checked);
+      const idx = cur < 0 ? 0 : Math.min(radios.length - 1, Math.max(0, cur + (key === 'ArrowDown' ? 1 : -1)));
+      const r = radios[idx];
+      r.focus();
+      if (!r.checked) { r.checked = true; r.dispatchEvent(new Event('change', { bubbles: true })); }
+      return true;
+    }
+    if (key === 'ArrowRight') { const n = wiz.querySelector('[data-key=next]'); if (n && !n.disabled) n.click(); else nudge(); return true; }
+    if (key === 'ArrowLeft') { back(); return true; }
+  }
+  if (view === 'result') {
+    if (key === 'ArrowLeft' && !saved) { back(); return true; }
+    if (key === 'ArrowRight') { const n = wiz.querySelector('[data-key=next]'); if (n && !n.disabled) { n.click(); return true; } }
+  }
+  return false;
+}
+document.addEventListener('keydown', e => {
+  if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.isComposing || document.querySelector('dialog[open]')) return;
+  const t = e.target instanceof Element ? e.target : null;
+  if (t?.closest('#comparison, #logik, .sbb-footer')) return;
+  if (t?.matches('textarea, select, [contenteditable], input:not([type=radio]):not([type=checkbox])')) {
+    const atEnd = t.id === 'case-title' && t.selectionStart === t.value.length && t.selectionEnd === t.value.length;
+    if (!(e.key === 'ArrowRight' && atEnd)) return;
+  }
+  if (keyNav(e.key)) e.preventDefault();
+});
 
 // ---------- QR-Dialog (Workshop: Handy-Zugang) ----------
 const qrDialog = document.getElementById('qr-dialog');
