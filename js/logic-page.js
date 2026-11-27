@@ -1,7 +1,7 @@
 // Erklärseite «Bewertungslogik»: Tabellen und Beispiele werden mit der Engine selbst berechnet.
 // Enthält keine Regeln – die Texte kommen aus js/docs.js (von test/docs.test.mjs gegen die Engine geprüft).
 import { questions, evaluate, liveAlerts, orderCases, Priority, unknownLabels, RULESET_VERSION } from './engine.js';
-import { serviceInfo, bonusLabel } from './explain.js';
+import { serviceInfo, serviceName, bonusLabel } from './explain.js';
 import { el, chip } from './ui.js';
 import { NEUTRAL, questionMeta, levelRules, serviceRules, bonusRules, BONUS_MAX, confidenceRules, gateRules, alertRules, examples } from './docs.js';
 
@@ -56,7 +56,7 @@ put('confidence', table('Belastbarkeit', ['Belastbarkeit', 'Wann'], confidenceRu
 
 // ---- Bearbeitungsart ----
 put('service-rules', table('Bearbeitungsart', ['Nr.', 'Bearbeitungsart', 'Wann', 'Bedeutung'], serviceRules.map((r, i) => el('tr', {}, [
-  td(el('span', { class: 'app-table__rank' }, String(i + 1))), td([el('strong', {}, r.service), ' ', v02(r)]), td(r.rule), td(serviceInfo[r.service])
+  td(el('span', { class: 'app-table__rank' }, String(i + 1))), td([el('strong', {}, serviceName(r.service)), el('span', { class: 'app-table__sub' }, r.service), ' ', v02(r)]), td(r.rule), td(serviceInfo[r.service])
 ]))));
 
 // ---- Startklar ----
@@ -115,7 +115,7 @@ put('examples', el('div', { class: 'app-examples' }, examples.map(e => {
     el('dl', { class: 'app-example__result' }, [
       el('div', {}, [el('dt', {}, 'Jira-Priorität'), el('dd', {}, [chip(res.priority), provisional ? ' vorläufig' : ''])]),
       el('div', {}, [el('dt', {}, 'Belastbarkeit'), el('dd', {}, res.confidence)]),
-      el('div', {}, [el('dt', {}, 'Bearbeitungsart'), el('dd', {}, res.service)]),
+      el('div', {}, [el('dt', {}, 'Bearbeitungsart'), el('dd', {}, serviceName(res.service))]),
       el('div', {}, [el('dt', {}, 'Vergleichswert'), el('dd', {}, formula(res) || 'Noch zu klären: ' + res.gates.join(', '))]),
       el('div', {}, [el('dt', {}, 'Massgebend'), el('dd', {}, res.reasons[0] || '–')])
     ]),

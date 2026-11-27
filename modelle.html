@@ -75,7 +75,7 @@
             <tr><td><a href="#jira-prioritaeten"><strong>Jira-Prioritäten</strong></a></td><td>Auf welcher Skala wird eingestuft?</td><td>Stufe 0–4 · × 100 im Vergleichswert</td></tr>
             <tr><td><a href="#auswirkung-dringlichkeit"><strong>Auswirkung × Dringlichkeit</strong></a> (ITIL)</td><td>Wie schwer wiegt der Fall, und wie schnell muss etwas passieren?</td><td>Regeln für die Jira-Priorität</td></tr>
             <tr><td><a href="#exposition"><strong>Exposition</strong></a> (angelehnt an CVSS)</td><td>Wie leicht ist eine Schwachstelle ausnutzbar?</td><td>Hebt Sicherheitsthemen auf Major bzw. Critical</td></tr>
-            <tr><td><a href="#classes-of-service"><strong>Kanban Classes of Service</strong></a></td><td>Wie wird der Fall behandelt?</td><td>Bearbeitungsart · Expedite +35</td></tr>
+            <tr><td><a href="#classes-of-service"><strong>Kanban Classes of Service</strong></a></td><td>Wie wird der Fall behandelt?</td><td>Bearbeitungsart · Sofort +35</td></tr>
             <tr><td><a href="#cost-of-delay"><strong>Cost of Delay und WSJF</strong></a></td><td>Was kommt innerhalb einer Stufe zuerst?</td><td>Zuschläge +1 bis +24</td></tr>
             <tr><td><a href="#definition-of-ready"><strong>Definition of Ready</strong></a></td><td>Kann sofort losgelegt werden?</td><td>Startklar oder «Noch zu klären»</td></tr>
             <tr><td><a href="#belastbarkeit"><strong>Confidence</strong></a> (aus RICE)</td><td>Wie sicher sind die Angaben?</td><td>Belastbarkeit · vorläufig</td></tr>
@@ -156,15 +156,15 @@
       <div class="app-model__grid">
         <div>
           <h3 class="app-info__h3">Kurz erklärt</h3>
-          <p>Die Kanban-Methode unterscheidet Arbeit danach, wie Verzögerung Kosten verursacht. Vier Grundtypen sind verbreitet: <strong>Expedite</strong> für echte Notfälle, die alles andere unterbrechen; <strong>Fixed Date</strong> für Arbeit, bei der ab einem Datum ein deutlicher Nachteil entsteht; <strong>Standard</strong> für die normale Arbeit, die möglichst bald fertig sein soll; <strong>Intangible</strong> für Arbeit ohne kurzfristigen Druck, die aber später teuer werden kann – etwa Wartung oder technische Schulden.</p>
+          <p>Die Kanban-Methode unterscheidet Arbeit danach, wie Verzögerung Kosten verursacht. Vier Grundtypen sind verbreitet – im Assistenten mit den deutschen Bezeichnern aus dem Workshop: <strong>Sofort</strong> (Expedite) für echte Notfälle, die alles andere unterbrechen; <strong>Fester Termin</strong> (Fixed Date) für Arbeit, bei der ab einem Datum ein deutlicher Nachteil entsteht; <strong>Standard</strong> für die normale Arbeit, die möglichst bald fertig sein soll; <strong>Langfristig</strong> (Intangible) für Arbeit ohne kurzfristigen Druck, die aber später teuer werden kann – etwa Wartung oder technische Schulden.</p>
         </div>
         <div>
           <h3 class="app-info__h3">So nutzt der Assistent es</h3>
           <div data-render="cos-table"></div>
         </div>
       </div>
-      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kanban steuert Classes of Service über eigene Bahnen, WIP-Limits und Startzeitpunkte. Der Assistent gibt nur die Klasse und eine Handlungsempfehlung aus; wie das Board damit umgeht, entscheidet das Team. In Kanban geht Expedite vor allem anderen. Im Assistenten bringt Expedite nur +35 und überholt so keine höhere Stufe – weil Expedite-Fälle ohnehin über den zuständigen Prozess laufen, nicht über die Vergleichsliste.</p>
-      <p class="app-model__score"><span>Wirkung</span> Expedite +35 · Fixed Date: Fristzuschlag +24 / +16 / +8 · Bearbeitungsempfehlung</p>
+      <p class="app-model__diff"><strong>Bewusst anders:</strong> Kanban steuert Classes of Service über eigene Bahnen, WIP-Limits und Startzeitpunkte. Der Assistent gibt nur die Klasse und eine Handlungsempfehlung aus; wie das Board damit umgeht, entscheidet das Team. In Kanban geht Expedite («Sofort») vor allem anderen. Im Assistenten bringt Sofort nur +35 und überholt so keine höhere Stufe – weil Expedite-Fälle ohnehin über den zuständigen Prozess laufen, nicht über die Vergleichsliste.</p>
+      <p class="app-model__score"><span>Wirkung</span> Sofort +35 · Fester Termin: Fristzuschlag +24 / +16 / +8 · Bearbeitungsempfehlung</p>
       <p class="app-model__sources">Mehr dazu: <a href="https://kanban.university/glossary/" target="_blank" rel="noopener">Kanban University: Glossar</a> · <a href="https://kanbantool.com/kanban-guide/classes-of-service" target="_blank" rel="noopener">Kanban Tool: Classes of Service</a></p>
     </section>
 

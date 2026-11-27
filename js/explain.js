@@ -32,7 +32,7 @@ export const reasonPriority = text => Priority[reasonLevel[text]] ?? null;
 
 // Zuschläge der Vergleichsreihenfolge (Bezeichnungen wie im Hilfetext der Referenz).
 export const bonusLabel = {
-  expedite: 'Expedite',
+  expedite: 'Sofort',
   deadline: 'wirksame Frist',
   dependency: 'Abhängigkeit',
   effort: 'kleiner Aufwand'
@@ -41,7 +41,17 @@ export const bonusLabel = {
 export const bonusList = bonuses =>
   Object.entries(bonuses || {}).filter(([, n]) => n > 0).map(([key, n]) => ({ key, label: bonusLabel[key] || key, points: n }));
 
-// Kurzbeschreibung der Bearbeitungsart (Class of Service) – reine Erläuterung.
+// Bearbeitungsart (Kanban Class of Service): Die Engine rechnet mit den Original-Schlüsseln (Expedite, Fixed Date,
+// Standard, Intangible), die Oberfläche zeigt die deutschen Bezeichner wie im Workshop-Deck.
+export const serviceLabel = {
+  Expedite: 'Sofort',
+  'Fixed Date': 'Fester Termin',
+  Standard: 'Standard',
+  Intangible: 'Langfristig'
+};
+export const serviceName = s => serviceLabel[s] || s;
+
+// Kurzbeschreibung der Bearbeitungsart – reine Erläuterung.
 export const serviceInfo = {
   Expedite: 'Sofort über den zuständigen Prozess, nicht über die normale Planung.',
   'Fixed Date': 'Vom verbindlichen Termin her planen.',

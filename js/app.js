@@ -1,7 +1,7 @@
 // Oberfläche des Priorisierungs-Assistenten. Enthält keine Bewertungsregeln – diese liegen vollständig in engine.js.
 // Navigation (begin/back/advance) entspricht dem Inline-Prototyp v0.1; dazu Bearbeiten gespeicherter Fälle und Live-Meter.
 import { questions, activeQuestions, evaluate, liveAlerts, orderCases, Priority, RULESET_VERSION } from './engine.js';
-import { reasonPriority, bonusList, serviceInfo, raiseHints } from './explain.js';
+import { reasonPriority, bonusList, serviceInfo, serviceName, raiseHints } from './explain.js';
 import { loadCases, saveCases, storageAvailable, newId } from './storage.js';
 import { el, prioIcon, chip } from './ui.js';
 
@@ -312,7 +312,7 @@ function resultView() {
     el('div', { class: 'app-result__head' }, [el('span', { class: 'app-result__num', 'aria-hidden': 'true' }, '2'), el('h2', { id: 'r2', class: 'sbb-title sbb-title--3' }, 'Bearbeitungsempfehlung')]),
     txt(result.treatment, 'app-treatment', { 'data-test': 'treatment' }),
     el('div', { class: 'app-tiles' }, [
-      el('div', { class: 'app-tile' }, [el('span', { class: 'app-label' }, 'Bearbeitungsart'), el('strong', { class: 'app-tile__value', 'data-test': 'service' }, result.service), txt(serviceInfo[result.service] || '', 'sbb-text-xs app-muted app-mb-0'), el('a', { class: 'sbb-text-xs', href: 'modelle.html#classes-of-service' }, 'Was bedeutet ' + result.service + '?')]),
+      el('div', { class: 'app-tile' }, [el('span', { class: 'app-label' }, 'Bearbeitungsart'), el('strong', { class: 'app-tile__value', 'data-test': 'service' }, serviceName(result.service)), txt(serviceInfo[result.service] || '', 'sbb-text-xs app-muted app-mb-0'), el('a', { class: 'sbb-text-xs', href: 'modelle.html#classes-of-service' }, 'Was bedeutet «' + serviceName(result.service) + '»?')]),
       el('div', { class: 'app-tile' + (position ? '' : ' app-tile--pending') }, [el('span', { class: 'app-label' }, 'Vergleichsreihenfolge'), el('strong', { class: 'app-tile__value', 'data-test': 'position' }, compareValue), txt(compareHint, 'sbb-text-xs app-muted app-mb-0', { 'data-test': position ? undefined : 'gates' })])
     ]),
     position
@@ -426,7 +426,7 @@ function comparisonView() {
   };
 
   if (ordered.length) body.append(el('h3', { class: 'sbb-title sbb-title--4 app-mt-4' }, 'Startklar · empfohlene Reihenfolge'),
-    el('ol', { class: 'app-rows' }, ordered.map((c, n) => row(c, String(n + 1), c.result.service))));
+    el('ol', { class: 'app-rows' }, ordered.map((c, n) => row(c, String(n + 1), serviceName(c.result.service)))));
   if (pending.length) body.append(el('h3', { class: 'sbb-title sbb-title--4 app-mt-4' }, 'Noch zu klären'),
     el('ul', { class: 'app-rows' }, pending.map(c => row(c, '?', c.result.gates.join(' · '), true))));
 

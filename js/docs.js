@@ -57,7 +57,7 @@ export const serviceRules = [
 
 // Zuschläge für die Reihenfolge innerhalb einer Stufe.
 export const bonusRules = [
-  { key: 'expedite', points: 35, rule: 'Bearbeitungsart Expedite (Dienst ausgefallen oder akuter Vorfall)', ex: { production: 'outage', workaround: 'yes' } },
+  { key: 'expedite', points: 35, rule: 'Bearbeitungsart Sofort (Dienst ausgefallen oder akuter Vorfall)', ex: { production: 'outage', workaround: 'yes' } },
   { key: 'deadline', points: 24, rule: 'Wirksame Frist innerhalb von 24 Stunden', ex: { deadline: 'day', deadlineImpact: 'material' } },
   { key: 'deadline', points: 16, rule: 'Wirksame Frist nach 24 Stunden bis in 7 Tagen', ex: { deadline: 'week', deadlineImpact: 'material' } },
   { key: 'deadline', points: 8, rule: 'Wirksame Frist ab dem 8. Tag', ex: { deadline: 'later', deadlineImpact: 'material' } },
