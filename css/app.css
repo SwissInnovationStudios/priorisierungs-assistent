@@ -517,6 +517,16 @@ a.sbb-header__brand { color: inherit; text-decoration: none; }
 .app-model__score { display: flex; flex-wrap: wrap; gap: 0.5rem 0.75rem; align-items: baseline; margin: var(--sbb-spacing-fixed-4x) 0 0; font-weight: 600; font-size: var(--sbb-typo-scale-0-875x); max-width: none; }
 .app-model__score span { color: var(--sbb-color-primary); font-size: 0.6875rem; letter-spacing: var(--app-tracking-label); text-transform: uppercase; }
 .app-model__sources { margin: var(--sbb-spacing-fixed-3x) 0 0; color: var(--app-color-muted); font-size: var(--sbb-typo-scale-0-8125x); max-width: none; }
+/* Ergebnis-Seite: PO einbeziehen + Jira-Label */
+.app-po { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sbb-spacing-fixed-4x); align-items: start; margin-top: var(--sbb-spacing-fixed-2x); padding: var(--sbb-spacing-fixed-4x); border-radius: var(--sbb-border-radius-4x); background: var(--app-color-page); border-left: 0.25rem solid var(--sbb-color-metal); }
+.app-po--ja { border-left-color: var(--sbb-color-primary); }
+.app-po--klaeren { border-left-color: var(--app-color-warn); }
+.app-po__flag { display: block; margin: 0.1rem 0 0.25rem; font-size: var(--sbb-typo-scale-1-125x, 1.125rem); }
+.app-jira-label__row { display: inline-flex; align-items: center; gap: var(--sbb-spacing-fixed-1x); margin-top: 0.2rem; }
+.app-jira-label__code { padding: 0.2rem 0.5rem; border: var(--sbb-border-width-1x) solid var(--app-color-card-border); border-radius: var(--sbb-border-radius-2x, 0.25rem); background: var(--sbb-color-white); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--sbb-typo-scale-0-8125x); user-select: all; }
+.sbb-mini-button.is-done { color: var(--sbb-color-success); }
+@media (max-width: 30rem) { .app-po { grid-template-columns: 1fr; } }
+
 /* Ergebnis-Seite: Verweis auf die Bewertungslogik */
 .app-explain-link { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sbb-spacing-fixed-3x); margin: var(--sbb-spacing-fixed-5x) 0 0; padding: var(--sbb-spacing-fixed-4x) var(--sbb-spacing-fixed-5x); border: var(--sbb-border-width-1x) solid var(--app-color-card-border); border-radius: var(--sbb-border-radius-8x); background: rgb(29 79 134 / 0.04); }
 .app-explain-link p { margin: 0; font-size: var(--sbb-typo-scale-0-875x); color: var(--sbb-color-iron); }

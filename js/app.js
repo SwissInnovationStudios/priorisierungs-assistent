@@ -1,7 +1,7 @@
 // Oberfläche des Priorisierungs-Assistenten. Enthält keine Bewertungsregeln – diese liegen vollständig in engine.js.
 // Navigation (begin/back/advance) entspricht dem Inline-Prototyp v0.1; dazu Bearbeiten gespeicherter Fälle und Live-Meter.
 import { questions, activeQuestions, evaluate, liveAlerts, orderCases, Priority, RULESET_VERSION } from './engine.js';
-import { reasonPriority, bonusList, serviceInfo, serviceName, raiseHints } from './explain.js';
+import { reasonPriority, bonusList, serviceInfo, serviceName, serviceJiraLabel, poInvolvement, raiseHints } from './explain.js';
 import { loadCases, saveCases, storageAvailable, newId } from './storage.js';
 import { el, prioIcon, chip } from './ui.js';
 
@@ -34,7 +34,8 @@ const ICONS = {
   edit: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/>',
   qr: '<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 19h1.5M19.5 14v2"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
-  book: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/>'
+  book: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>'
 };
 function icon(name, cls = 'app-icon') {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -315,6 +316,7 @@ function resultView() {
       el('div', { class: 'app-tile' }, [el('span', { class: 'app-label' }, 'Bearbeitungsart'), el('strong', { class: 'app-tile__value', 'data-test': 'service' }, serviceName(result.service)), txt(serviceInfo[result.service] || '', 'sbb-text-xs app-muted app-mb-0'), el('a', { class: 'sbb-text-xs', href: 'modelle.html#classes-of-service' }, 'Was bedeutet «' + serviceName(result.service) + '»?')]),
       el('div', { class: 'app-tile' + (position ? '' : ' app-tile--pending') }, [el('span', { class: 'app-label' }, 'Vergleichsreihenfolge'), el('strong', { class: 'app-tile__value', 'data-test': 'position' }, compareValue), txt(compareHint, 'sbb-text-xs app-muted app-mb-0', { 'data-test': position ? undefined : 'gates' })])
     ]),
+    poRow(result.service),
     position
       ? el('div', { class: 'app-bonuses' }, [
           el('span', { class: 'app-label' }, 'Vorziehen innerhalb der Stufe'),
@@ -453,6 +455,25 @@ function render(focus = false) {
   if (focus) wiz.querySelector('[data-focus]')?.focus({ preventScroll: true });
   if (focus && wiz.getBoundingClientRect().top < 0) wiz.scrollIntoView({ block: 'start' });
   saveDraft();
+}
+
+// PO einbeziehen? + Jira-Label (kopierbar). Reine Anzeige, abgeleitet aus Bearbeitungsart und Aufwand.
+function poRow(service) {
+  const po = poInvolvement(service, a);
+  const label = serviceJiraLabel[service];
+  const code = el('code', { class: 'app-jira-label__code', 'data-test': 'jira-label' }, label);
+  const copy = el('button', { type: 'button', class: 'sbb-mini-button', 'aria-label': `Label ${label} kopieren`, title: 'Kopieren', click: async () => {
+    try { await navigator.clipboard.writeText(label); copy.classList.add('is-done'); copy.setAttribute('aria-label', 'Kopiert'); setTimeout(() => { copy.classList.remove('is-done'); copy.setAttribute('aria-label', `Label ${label} kopieren`); }, 1500); }
+    catch { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  } }, [icon('copy', 'app-icon app-icon--s')]);
+  return el('div', { class: 'app-po app-po--' + po.flag.toLowerCase().replace('ä', 'ae') }, [
+    el('div', { class: 'app-po__main' }, [
+      el('span', { class: 'app-label' }, 'PO einbeziehen?'),
+      el('strong', { class: 'app-po__flag', 'data-test': 'po-flag' }, po.flag),
+      txt(po.text, 'sbb-text-xs app-muted app-mb-0', { 'data-test': 'po-text' })
+    ]),
+    el('div', { class: 'app-jira-label' }, [el('span', { class: 'app-label' }, 'Jira-Label'), el('span', { class: 'app-jira-label__row' }, [code, copy])])
+  ]);
 }
 
 // ---------- Entwurf ----------

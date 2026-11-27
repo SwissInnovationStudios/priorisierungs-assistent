@@ -4,6 +4,10 @@
 //
 // Priorität und Vergleichsreihenfolge werden bewusst getrennt berechnet.
 
+// Aufwandsschwelle in Personentagen: darüber ist der PO einzubeziehen (Workshop-Entscheid). Steuert nur die
+// Beschriftung der Aufwandsfrage und den Hinweis «PO einbeziehen» – nicht die Stufe.
+export const PO_EFFORT_THRESHOLD_PT = 3;
+
 export const RULESET_VERSION = 'Regelwerk v0.2 · Workshop-Entwurf';
 
 export const Priority = ['Trivial','Minor','Major','Critical','Blocker'];
@@ -34,7 +38,7 @@ export const questions = [
   {id:'value',title:'Welchen Nutzen oder welche Risikoreduktion bringt die Umsetzung?',options:[
     ['low','Geringer oder kein zusätzlicher Nutzen'],['medium','Begrenzter Nutzen'],['high','Wesentlicher Nutzen oder hohe Risikoreduktion'],['long','Langfristig wesentlicher Nutzen, ohne akuten Zeitdruck'],unknown]},
   {id:'effort',title:'Wie gross ist der geschätzte Aufwand?',hint:'Der Aufwand beeinflusst allenfalls die Reihenfolge, nicht die Jira-Priorität.',options:[
-    ['small','Klein'],['medium','Mittel'],['large','Gross'],unknown]},
+    ['small','Klein (unter 1 Personentag)'],['medium',`Mittel (1 bis ${PO_EFFORT_THRESHOLD_PT} Personentage)`],['large',`Gross (über ${PO_EFFORT_THRESHOLD_PT} Personentage)`],unknown]},
   {id:'ready',title:'Ist der Vorgang startklar?',hint:'Sind die nötigen Voraussetzungen, Kompetenzen und Kapazitäten verfügbar?',options:[
     ['yes','Ja'],['no','Nein'],unknown]},
   {id:'confidence',title:'Wie belastbar sind deine Angaben?',options:[

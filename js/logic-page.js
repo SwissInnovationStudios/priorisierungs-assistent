@@ -1,9 +1,10 @@
 // Erklärseite «Bewertungslogik»: Tabellen und Beispiele werden mit der Engine selbst berechnet.
 // Enthält keine Regeln – die Texte kommen aus js/docs.js (von test/docs.test.mjs gegen die Engine geprüft).
 import { questions, evaluate, liveAlerts, orderCases, Priority, unknownLabels, RULESET_VERSION } from './engine.js';
-import { serviceInfo, serviceName, bonusLabel } from './explain.js';
+import { serviceInfo, serviceName, serviceJiraLabel, bonusLabel } from './explain.js';
+import { PO_EFFORT_THRESHOLD_PT } from './engine.js';
 import { el, chip } from './ui.js';
-import { NEUTRAL, questionMeta, levelRules, serviceRules, bonusRules, BONUS_MAX, confidenceRules, gateRules, alertRules, examples } from './docs.js';
+import { NEUTRAL, questionMeta, levelRules, serviceRules, bonusRules, BONUS_MAX, confidenceRules, gateRules, alertRules, examples, poRules } from './docs.js';
 
 const run = ex => evaluate({ ...NEUTRAL, ...ex });
 const slot = name => document.querySelector(`[data-render="${name}"]`);
@@ -58,6 +59,13 @@ put('confidence', table('Belastbarkeit', ['Belastbarkeit', 'Wann'], confidenceRu
 put('service-rules', table('Bearbeitungsart', ['Nr.', 'Bearbeitungsart', 'Wann', 'Bedeutung'], serviceRules.map((r, i) => el('tr', {}, [
   td(el('span', { class: 'app-table__rank' }, String(i + 1))), td([el('strong', {}, serviceName(r.service)), el('span', { class: 'app-table__sub' }, r.service), ' ', v02(r)]), td(r.rule), td(serviceInfo[r.service])
 ]))));
+
+// ---- PO einbeziehen + Jira-Label ----
+const flagCls = { Ja: 'success', Klären: 'warning', Nein: 'error' };
+put('po-rules', table('PO einbeziehen', ['Bearbeitungsart', 'PO einbeziehen?', 'Wann', 'Jira-Label'], poRules.map(r => el('tr', {}, [
+  td(el('strong', {}, serviceName(r.service))), td(el('span', { class: 'sbb-status sbb-status--' + flagCls[r.flag] }, r.flag)), td(r.when), td(el('code', { class: 'app-jira-label__code' }, serviceJiraLabel[r.service]))
+]))));
+document.querySelectorAll('[data-render="po-threshold"]').forEach(n => { n.textContent = String(PO_EFFORT_THRESHOLD_PT); });
 
 // ---- Startklar ----
 put('gates', table('Gründe für «Noch zu klären»', ['Grund in der Liste', 'Bedingung'], gateRules.map(r => el('tr', {}, [td(el('strong', {}, r.gate)), td(r.rule)]))));

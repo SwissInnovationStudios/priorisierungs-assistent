@@ -93,6 +93,16 @@ export const alertRules = [
   { when: 'Betriebs- oder Sicherheitslage «Unklar»', prefix: 'Betriebs- oder Sicherheitslage klären', live: false, ex: { security: 'unknown' } }
 ];
 
+// PO einbeziehen? (Hybridmodell: Team entscheidet selbst, PO bei Sofort, Fester Termin, Langfristig und grossem Aufwand).
+export const poRules = [
+  { service: 'Expedite', flag: 'Ja', when: 'immer', ex: { production: 'outage', workaround: 'yes' } },
+  { service: 'Fixed Date', flag: 'Ja', when: 'immer', ex: { deadline: 'week', deadlineImpact: 'material' } },
+  { service: 'Intangible', flag: 'Ja', when: 'immer – der PO führt das übergeordnete Thema', ex: { value: 'long' } },
+  { service: 'Standard', flag: 'Ja', when: 'Aufwand gross (über der Schwelle)', ex: { effort: 'large' } },
+  { service: 'Standard', flag: 'Klären', when: 'Aufwand unklar', ex: { effort: 'unknown' } },
+  { service: 'Standard', flag: 'Nein', when: 'sonst – Ausnahme: Leistungsabgrenzung unklar (Team meldet)', ex: {} }
+];
+
 // Durchgerechnete Beispiele (werden auf der Seite live mit der Engine berechnet).
 export const examples = [
   { title: 'Kritischer Dienst steht', ex: { production: 'criticalOutage', impact: 'severe', workaround: 'no', dependency: 'multiple', value: 'high' }, note: 'Alle drei Blocker-Bedingungen sind erfüllt. Expedite und die wartenden Teams ziehen zusätzlich nach vorne.' },

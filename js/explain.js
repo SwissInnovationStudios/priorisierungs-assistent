@@ -3,7 +3,7 @@
 // Hier wird nur zugeordnet, welche Prioritätsstufe ein Begründungstext auslöst, damit die Oberfläche zeigen kann,
 // welches Kriterium die Stufe bestimmt. test/parity.test.mjs prüft, dass jede mögliche Begründung erfasst ist
 // und die höchste zugeordnete Stufe immer der Engine-Priorität entspricht.
-import { Priority, questions, activeQuestions, evaluate, unknownLabels } from './engine.js';
+import { Priority, questions, activeQuestions, evaluate, unknownLabels, PO_EFFORT_THRESHOLD_PT } from './engine.js';
 
 export const reasonLevel = {
   'Kritischer produktiver Dienst ausgefallen, schwerwiegende Folgen und keine tragfähige Umgehung.': 4,
@@ -50,6 +50,26 @@ export const serviceLabel = {
   Intangible: 'Langfristig'
 };
 export const serviceName = s => serviceLabel[s] || s;
+
+// Jira-Label je Bearbeitungsart (Präfix «art-»), damit der Wert direkt ins Ticket kann.
+export const serviceJiraLabel = {
+  Expedite: 'art-sofort',
+  'Fixed Date': 'art-fester-termin',
+  Standard: 'art-standard',
+  Intangible: 'art-langfristig'
+};
+
+// PO einbeziehen? Abgeleitet aus Bearbeitungsart und Aufwand (Workshop-Entscheid, Hybridmodell).
+// Reine Anzeige – verändert weder Stufe noch Reihenfolge. Rückgabe: { flag: 'Ja' | 'Nein' | 'Klären', text }.
+export function poInvolvement(service, answers = {}) {
+  const pt = PO_EFFORT_THRESHOLD_PT;
+  if (service === 'Expedite') return { flag: 'Ja', text: 'Zwingend – der PO entscheidet über das Vorziehen.' };
+  if (service === 'Fixed Date') return { flag: 'Ja', text: 'Der PO bestätigt Termin und Kapazität.' };
+  if (service === 'Intangible') return { flag: 'Ja', text: 'Der PO führt das übergeordnete Thema (Feature); Massnahmen daraus plant das Team.' };
+  if (answers.effort === 'large') return { flag: 'Ja', text: `Aufwand über ${pt} Personentage – vor dem Start beim PO vorlegen.` };
+  if (answers.effort === 'unknown') return { flag: 'Klären', text: `Aufwand noch unbekannt. Ab ${pt} Personentagen ist der PO einzubeziehen.` };
+  return { flag: 'Nein', text: `Das Team entscheidet selbst. Ausnahmen: Aufwand über ${pt} Personentage oder unklare Leistungsabgrenzung.` };
+}
 
 // Kurzbeschreibung der Bearbeitungsart – reine Erläuterung.
 export const serviceInfo = {

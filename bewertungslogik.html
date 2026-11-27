@@ -74,6 +74,7 @@
         <li><a href="#prioritaet">Jira-Priorität</a></li>
         <li><a href="#belastbarkeit">Belastbarkeit</a></li>
         <li><a href="#bearbeitungsart">Bearbeitungsart</a></li>
+        <li><a href="#po">PO einbeziehen und Jira-Label</a></li>
         <li><a href="#startklar">Startklar oder «Noch zu klären»</a></li>
         <li><a href="#reihenfolge">Reihenfolge im Vergleich</a></li>
         <li><a href="#hinweise">Hinweise und Eskalation</a></li>
@@ -141,7 +142,7 @@
       <p>Jede Antwort kann eine oder mehrere Regeln auslösen. Jede Regel steht für eine Mindeststufe. Die Jira-Priorität ist die höchste dieser Stufen. Alle ausgelösten Regeln erscheinen in der Auswertung unter «Warum diese Stufe?»; die massgebende ist hervorgehoben.</p>
       <p>Kurz gesagt bedeuten die Stufen in diesem Regelwerk:</p>
       <dl class="app-levels">
-        <div><dt data-chip="Blocker"></dt><dd>Akuter oder unmittelbar drohender schwerwiegender Schaden, ohne tragfähige Umgehung.</dd></div>
+        <div><dt data-chip="Blocker"></dt><dd>Muss heute begonnen werden, sonst entsteht schwerwiegender Schaden – und es gibt keine tragfähige Umgehung. Typisch: eine Frist in den nächsten 24 Stunden mit schweren Folgen. Ein akuter Ausfall läuft über den Störungsprozess und erreicht Jira selten.</dd></div>
         <div><dt data-chip="Critical"></dt><dd>Ausfall, akutes oder exponiertes Sicherheitsrisiko, kurzfristige Frist mit schweren Folgen.</dd></div>
         <div><dt data-chip="Major"></dt><dd>Wesentliche Auswirkungen oder wesentlicher Nutzen, planbare Risiken, wichtige Abhängigkeiten.</dd></div>
         <div><dt data-chip="Minor"></dt><dd>Begrenzte Auswirkungen oder begrenzter Nutzen.</dd></div>
@@ -183,8 +184,15 @@
       </div>
     </section>
 
+    <section class="sbb-card app-info__section" id="po" aria-labelledby="h-po">
+      <h2 class="app-info__h2" id="h-po"><span class="app-info__num">7</span>PO einbeziehen und Jira-Label</h2>
+      <p>Das Team bewertet und entscheidet selbst – der Product Owner kommt dort dazu, wo er das stärkste Wort haben muss: bei Sofortmassnahmen, bei festen Terminen, bei den langfristigen Themen und bei grossem Aufwand. Die Bearbeitungsart legt das fest; der Aufwand kann bei «Standard» die Antwort ändern. Die Schwelle liegt bei <span data-render="po-threshold">3</span> Personentagen.</p>
+      <div data-render="po-rules"></div>
+      <p>Das Jira-Label (Präfix <code>art-</code>) steht in der Auswertung zum Kopieren bereit, damit die Bearbeitungsart direkt am Ticket landet und sich das Board danach filtern lässt. Eine unklare Leistungsabgrenzung fragt der Assistent nicht ab – sie ist ein Grund, den das Team selbst erkennt und meldet.</p>
+    </section>
+
     <section class="sbb-card app-info__section" id="startklar" aria-labelledby="h-startklar">
-      <h2 class="app-info__h2" id="h-startklar"><span class="app-info__num">7</span>Startklar oder «Noch zu klären»</h2>
+      <h2 class="app-info__h2" id="h-startklar"><span class="app-info__num">8</span>Startklar oder «Noch zu klären»</h2>
       <p>Einen Platz in der Reihenfolge bekommt nur ein Fall, der sofort bearbeitet werden könnte. Trifft eine der folgenden Bedingungen zu, steht er in der Vergleichsliste unter «Noch zu klären» – mit dem Grund. Seine Stufe und Bearbeitungsart bleiben sichtbar.</p>
       <div data-render="gates"></div>
       <div class="app-model-note" role="note">
@@ -195,7 +203,7 @@
     </section>
 
     <section class="sbb-card app-info__section" id="reihenfolge" aria-labelledby="h-reihenfolge">
-      <h2 class="app-info__h2" id="h-reihenfolge"><span class="app-info__num">8</span>Reihenfolge im Vergleich</h2>
+      <h2 class="app-info__h2" id="h-reihenfolge"><span class="app-info__num">9</span>Reihenfolge im Vergleich</h2>
       <p>Startklare Fälle mit ausreichender Belastbarkeit erhalten einen Vergleichswert. Die Vergleichsliste sortiert danach, absteigend.</p>
       <p class="app-formula"><span>Vergleichswert</span> = <span>100 × Stufe</span> + <span>Zuschläge</span></p>
       <p class="sbb-text-s app-muted">Stufe: Trivial = 0, Minor = 1, Major = 2, Critical = 3, Blocker = 4.</p>
@@ -211,13 +219,13 @@
     </section>
 
     <section class="sbb-card app-info__section" id="hinweise" aria-labelledby="h-hinweise">
-      <h2 class="app-info__h2" id="h-hinweise"><span class="app-info__num">9</span>Hinweise und Eskalation</h2>
+      <h2 class="app-info__h2" id="h-hinweise"><span class="app-info__num">10</span>Hinweise und Eskalation</h2>
       <p>Manche Lagen gehören nicht in die normale Planung, sondern in einen zuständigen Prozess. Dann erscheint ein Hinweis – bei akuten Fällen schon während der Fragen, damit niemand auf die Auswertung wartet. Ein Hinweis ändert die Stufe nicht; er sagt, wer jetzt einzubeziehen ist.</p>
       <div data-render="alerts"></div>
     </section>
 
     <section class="sbb-card app-info__section" id="anzeige" aria-labelledby="h-anzeige">
-      <h2 class="app-info__h2" id="h-anzeige"><span class="app-info__num">10</span>Mindeststufe und «Was würde die Stufe heben?»</h2>
+      <h2 class="app-info__h2" id="h-anzeige"><span class="app-info__num">11</span>Mindeststufe und «Was würde die Stufe heben?»</h2>
       <p>Beides sind reine Anzeigen. Sie verwenden dieselbe Rechenlogik und fügen keine eigenen Regeln hinzu.</p>
       <ul class="app-info__list">
         <li><strong>Mindeststufe während der Fragen:</strong> Nach jedem «Weiter» zeigt die Skala neben der Frage, welche Stufe die bisherigen Antworten mindestens ergeben. Steigt sie, wird die auslösende Regel kurz eingeblendet. Beim Vorwärtsbeantworten kann sie nur steigen, nie sinken – weitere Antworten können nur zusätzliche Regeln auslösen.</li>
@@ -227,13 +235,13 @@
     </section>
 
     <section class="sbb-card app-info__section" id="beispiele" aria-labelledby="h-beispiele">
-      <h2 class="app-info__h2" id="h-beispiele"><span class="app-info__num">11</span>Durchgerechnete Beispiele</h2>
+      <h2 class="app-info__h2" id="h-beispiele"><span class="app-info__num">12</span>Durchgerechnete Beispiele</h2>
       <p>Diese Fälle werden beim Laden der Seite mit der Rechenlogik des Assistenten berechnet. Nicht genannte Antworten: kein Ausfall, minimale Auswirkungen, kein Sicherheitsthema, keine Frist, keine Abhängigkeit, geringer Nutzen, mittlerer Aufwand, startklar, Belastbarkeit hoch.</p>
       <div data-render="examples"></div>
     </section>
 
     <section class="sbb-card app-info__section" id="grenzen" aria-labelledby="h-grenzen">
-      <h2 class="app-info__h2" id="h-grenzen"><span class="app-info__num">12</span>Grenzen und Verantwortung</h2>
+      <h2 class="app-info__h2" id="h-grenzen"><span class="app-info__num">13</span>Grenzen und Verantwortung</h2>
       <ul class="app-info__list">
         <li><strong>Empfehlung, keine Entscheidung.</strong> Das Team bewertet selbst; bei Konflikten oder Unklarheiten entscheidet der Product Owner.</li>
         <li><strong>Prozesse haben Vorrang.</strong> Betriebs-, Incident- und Sicherheitsprozesse gelten unabhängig vom Ergebnis. Der Assistent ersetzt keine Eskalation.</li>
